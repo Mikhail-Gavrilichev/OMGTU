@@ -1,0 +1,22 @@
+//Для n вводимых элементов определить количество пар элементов, значения суммы которых положительно.
+using System;
+class HelloWorld {
+static void Main() {
+int n=Convert.ToInt32(Console.ReadLine());
+int o=0;
+for (int i=1; i<=n; i++)
+    {
+      int a=Convert.ToInt32(Console.ReadLine());  
+      int b=Convert.ToInt32(Console.ReadLine());
+      
+      
+      if ((a+b)>0)
+      
+      {
+          o++;
+      }
+      
+    }
+    Console.WriteLine(o);
+}
+}
