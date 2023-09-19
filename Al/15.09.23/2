@@ -1,0 +1,22 @@
+//Для 10 вводимых элементов найти среднее арифметическое положительных чисел.
+using System;
+class HelloWorld {
+static void Main() {
+int k=0;
+int t=0;
+for (int i=0; i<=9; i++)
+  {    
+     int n=Convert.ToInt32(Console.ReadLine());
+      if (n>0)
+      
+      {
+          
+    k++;
+    t=t+n;
+          
+      }
+      
+  }
+   Console.WriteLine(t/k);
+}
+}
