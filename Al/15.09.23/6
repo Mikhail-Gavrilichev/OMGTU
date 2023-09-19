@@ -1,0 +1,22 @@
+//Для n вводимых элементов определить количество элементов, значение которых меньше предшествующих элементов.
+using System;
+class HelloWorld {
+static void Main() {
+int n=Convert.ToInt32(Console.ReadLine());
+int min=Convert.ToInt32(Console.ReadLine());
+int o=0;
+for (int i=1; i<n; i++)
+    {
+      int b=Convert.ToInt32(Console.ReadLine());
+      
+      
+      if (b<min)
+      
+      {
+          min=b;
+          o++;
+      }
+    }
+    Console.WriteLine(o);
+}
+}
