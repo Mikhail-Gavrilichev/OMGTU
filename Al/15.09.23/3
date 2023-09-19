@@ -1,0 +1,20 @@
+//Для 10 вводимых элементов найти количество отрицательных чисел.
+using System;
+class HelloWorld {
+static void Main() {
+int t=0;
+for (int i=0; i<=9; i++)
+   { 
+       int n=Convert.ToInt32(Console.ReadLine());
+       if (n<0)
+       
+        {
+            
+        t++;
+        
+        }
+        
+   }
+   Console.WriteLine(t);
+}
+}
