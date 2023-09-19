@@ -1,0 +1,21 @@
+//Для 10 вводимых элементов найти максимальное значение.
+using System;
+class H {
+static void Main() {
+int n;
+int max=Convert.ToInt32(Console.ReadLine());
+for (int i=0; i<=8; i++)
+  {
+    n=Convert.ToInt32(Console.ReadLine());
+    if (max<n)
+    
+    {
+        
+    max=n;
+    
+    }
+   
+  }
+   Console.WriteLine(max);
+}
+}
