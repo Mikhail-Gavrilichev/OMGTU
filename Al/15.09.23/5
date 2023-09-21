@@ -1,0 +1,20 @@
+//Для n вводимых элементов определить количество элементов, значение которых больше предшествующего элемента.
+using System;
+class HelloWorld {
+        static void Main() {
+        int o=0;
+        int n=Convert.ToInt32(Console.ReadLine());
+        int a=Convert.ToInt32(Console.ReadLine());
+        for (int i=1; i<n; i++) {
+          int b=Convert.ToInt32(Console.ReadLine());
+          if (a<b)
+    
+          {
+              o++;
+          }
+          
+          a=b;
+        }
+        Console.WriteLine(o);
+    }
+}
