@@ -1,0 +1,37 @@
+//Задача про грядки
+// 1)По формуле.
+using System;
+class HelloWorld {
+  static void Main() {
+    
+    int l=7;
+    int n=5;
+    int m=10;
+    int s;
+    int k=Convert.ToInt32(Console.ReadLine());
+    s=2*k*(l+m+n)+m*k*(k-1);
+    
+    Console.WriteLine(s);
+    
+  }
+}
+// 2)Через цикл.
+using System;
+class HelloWorld {
+  static void Main() {
+    
+    int l=7;
+    int n=5;
+    int m=10;
+    int s=0;
+    int k=Convert.ToInt32(Console.ReadLine());
+   
+   for (int i = 0; i < k; i++)
+   
+   { 
+    s=s+2*(l+m+n)+m*(k-1);
+   }
+   
+    Console.WriteLine(s);
+  }
+}
