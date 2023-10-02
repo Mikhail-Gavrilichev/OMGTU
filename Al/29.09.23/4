@@ -1,0 +1,34 @@
+// 4) На вход подаётся последовательность из n элементов, определить все ли элементы последовательности положительные чётные числа, оканчивающиеся на шесть.
+using System;
+
+class H
+{
+    static void Main()
+    {
+        int N = Convert.ToInt32(Console.ReadLine());
+        int p = 0;
+
+        for (int i = 0; i < N; i++)
+        {
+            int b = Convert.ToInt32(Console.ReadLine());
+
+            int c = b % 10;
+
+            if ((b > 0)&(c == 6))
+            {
+                    p++;
+            }
+        }
+
+        if (p != N)
+        {
+            Console.WriteLine("false");
+        }
+
+        else
+        {
+            Console.WriteLine("true");
+        }
+
+    }
+}
