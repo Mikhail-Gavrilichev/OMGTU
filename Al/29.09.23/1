@@ -1,0 +1,44 @@
+//1)На вход подается последовательность из n элемнтов определить минимальный размер подпоследовательности состоящей из нулевых элементов.
+using System;
+class H
+{
+    static void Main1()
+    {
+        int N = Convert.ToInt32(Console.ReadLine());
+        int number_of_zeros = 0;
+        int min = 0;
+
+        for (int i = 0; i < N; i++)
+        {
+            int a = Convert.ToInt32(Console.ReadLine());
+            if (a == 0)
+            {
+                number_of_zeros++;
+            }
+            else if (min > number_of_zeros)
+            {
+                if (number_of_zeros > 0)
+                {
+                    min = number_of_zeros;
+                    number_of_zeros = 0;
+                }
+            }
+            else
+            {
+                min = number_of_zeros;
+                number_of_zeros = 0;
+            }
+
+            if (i == N - 1)
+            {
+                if ((min > number_of_zeros) && (number_of_zeros > 0))
+                {
+                    min = number_of_zeros;
+                }
+            }
+        }
+
+
+
+        Console.WriteLine("min = {0}", min);
+    }
