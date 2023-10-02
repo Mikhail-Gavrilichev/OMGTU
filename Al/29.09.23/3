@@ -1,0 +1,43 @@
+// 3) На вход подаётся последовательность из n элементов, определить максимальный размер возрастающей последовательности.
+
+using System;
+class H
+{
+    static void Main()
+    {
+        int N = Convert.ToInt32(Console.ReadLine());
+        int max = 0;
+        int p = 1;
+        int a = Convert.ToInt32(Console.ReadLine());
+
+        for (int i = 1; i < N; i++)
+        {
+            int b = Convert.ToInt32(Console.ReadLine());
+
+
+            if (b > a)
+            {
+                p++;
+            }
+            else if ((p > max) && (p > 1))
+            {
+                max = p;
+                p = 1;
+            }
+
+            a = b;
+
+            if (i == N - 1)
+            {
+                if ((p > max) && (p > 1))
+                {
+                    max = p;
+                }
+            }
+
+
+        }
+        Console.WriteLine("max = {0}", max);
+    }
+}
+
