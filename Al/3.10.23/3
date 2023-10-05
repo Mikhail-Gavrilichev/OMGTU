@@ -1,0 +1,47 @@
+using System;
+
+class H
+{
+    static void Main()
+    {
+        int t = 0;
+        int all = 0;
+        int N = Convert.ToInt32(Console.ReadLine());
+
+        for (int i = 0; i < N; i++)
+        {
+            int S = 1;
+            int a = Convert.ToInt32(Console.ReadLine());
+
+            do
+            {
+                t = a % 10;
+                a = a / 10;
+
+                if ((t == 2) || (t == 4) || (t==6) || (t == 8))
+                {
+                    S *= t;
+                }
+            }
+            while (a != 0);
+
+            if (((S%8)==0)&&(S!=0))
+            {
+                all++;
+            }
+
+
+
+        }
+        if (all == N)
+        {
+            Console.WriteLine("ДА");
+        }
+        else
+        {
+            Console.WriteLine("Нет");
+        }
+
+
+    }
+}
