@@ -1,0 +1,32 @@
+using System;
+
+class H
+{
+    static void Main()
+    {
+        int all = 0;
+        int N = Convert.ToInt32(Console.ReadLine());
+
+        for (int i = 0; i < N; i++)
+        {
+            int a = Convert.ToInt32(Console.ReadLine());
+
+            do
+            {
+                int t = 0;
+
+                t = a % 10;
+                a = a / 10;
+
+                if (t == 4)
+                {
+                    all++;
+                    break;
+                }
+            }
+            while (a != 0);
+
+        }
+        Console.WriteLine(all);
+    }
+}
