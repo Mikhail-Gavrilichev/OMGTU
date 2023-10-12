@@ -1,0 +1,61 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        Console.Write("Введите количество мышек: ");
+        int N = Convert.ToInt32(Console.ReadLine()); //Кол-во мышек
+        Console.Write("Введите позицию белой мыши: ");
+        int b = Convert.ToInt32(Console.ReadLine()); //Позиция белой мыши
+        Console.Write("Введите номер мыши съедаемой котом: ");
+        int a = Convert.ToInt32(Console.ReadLine()); //Номер мыши съедаемой котом
+        int m = 0; // ответ (позиция, с которой нужно начать)
+        int u = 0;
+
+        int[] mas = new int[N];
+        // Заполняем массив живыми мышками
+        for (int i = 0; i < N; i++)
+        {
+            mas[i] = 1;
+        }
+        // Съедаем мышек
+        for (int i = 1; i < N; i++)
+        {
+            for(int j = 0; j<a; j++)
+            {
+                do
+                {
+                    u++;
+                    if (u > N - 1)
+                    {
+                        u -= N;
+                    }
+                }
+                while (mas[u] == 0);
+            }
+            // Съедаем мышку
+            mas[u] = 0;
+         }
+
+        do
+        {
+            u++;
+            if (u > N - 1)
+            {
+                u -= N;
+            }
+        }
+        while (mas[u] == 0);
+
+
+      
+        m = u - b;
+        m = 0 - m;
+        if (m < 0)
+            m += N;
+
+        Console.WriteLine(m);
+    }
+}
