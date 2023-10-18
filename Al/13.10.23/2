@@ -1,0 +1,33 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int m = Convert.ToInt32(Console.ReadLine());
+        int q = 0;
+
+        int[,] mas = new int[n, m];
+
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                mas[i, j] = Convert.ToInt32(Console.ReadLine());
+                if (mas[i, j]>0)
+                {
+                    q++;
+                }
+            }
+        }
+        //Массив заполнен
+
+
+
+        Console.WriteLine(q);
+
+    }
+}
