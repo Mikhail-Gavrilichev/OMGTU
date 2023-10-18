@@ -1,0 +1,47 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int m = Convert.ToInt32(Console.ReadLine());
+        int o = 0;
+        int u = 0;
+        int q;
+        int[] mas3 = new int[m];
+        int[] mas2 = new int[n * m];
+        int[,] mas = new int[n, m];
+
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                mas[i, j] = Convert.ToInt32(Console.ReadLine());
+
+            }
+        }
+        for (int j = 0; j < m; j++)
+        {
+            q = 1000000000;
+            for (int i = 0; i < n; i++)
+            {
+                mas2[o] = mas[i, j];
+                if (q > mas2[o])
+                {
+                    q = mas2[o];
+                }
+                o++;
+            }
+            mas3[u] = q;
+            u++;
+
+        }
+        for (int i = 0; i < m; i++)
+        {
+            Console.WriteLine("Минимальный элемент столбца {0}={1}", i, mas3[i]);
+        }
+    }
+}
