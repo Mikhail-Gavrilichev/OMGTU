@@ -1,0 +1,40 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int m = Convert.ToInt32(Console.ReadLine());
+        int u;
+        int o = 0;
+        int[] mas2 = new int[n * m];
+        int[,] mas = new int[n, m];
+
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                mas[i, j] = Convert.ToInt32(Console.ReadLine());
+
+            }
+        }
+        for (int i = 0; i < n; i++)
+        {
+            u = 0;
+            for (int j = 0; j < m; j++)
+            {
+                mas2[o] = mas[i, j];
+                if (mas2[o] < 0)
+                {
+                    u++;
+                }
+                o++;
+            }
+            Console.WriteLine("Строка {0}", i);
+            Console.WriteLine(u);
+        }
+    }      
+}
