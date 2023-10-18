@@ -1,0 +1,74 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int m = Convert.ToInt32(Console.ReadLine());
+        int o = 0;
+        int u = 0;
+        int q=0;
+        int t = 0;
+        int h = 0;
+        int S = 0;
+        int P = 0;
+        int nol = 0;
+        int g = 0;
+        int[] mas2 = new int[n * m];
+        int[,] mas = new int[n, m];
+
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                mas[i, j] = Convert.ToInt32(Console.ReadLine());
+
+            }
+        }
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                mas2[o] = mas[i, j];
+                o++;
+            }
+        }
+
+        for (int j = 0; j < n; j++)
+        {
+            S = 0;
+            nol = 0;
+            P = 1;
+            for (int i = 0; i < m; i++)
+            {
+                if (mas2[u] == 0)
+                {
+                    nol++;
+                }
+                else
+                {
+                    S = S + mas2[u];
+                    P = P * mas2[u];
+                    u++;
+                }
+                 
+            }
+
+            if ((j != 0) & (S == q) & (t == P) & (h == nol))
+            {
+                g++;
+            }
+
+            q = S;
+            t = P;
+            h = nol;
+        }
+        Console.WriteLine(g);
+
+
+
+    }
+}
