@@ -1,0 +1,30 @@
+using System;
+using System.Reflection.Metadata;
+
+
+class H
+{
+    static void Main()
+    {
+        Int64 N = 0;
+        Int64 K = 0;
+        Int64 maxN = Convert.ToInt32(Console.ReadLine());
+        Int64 b = 0;
+        for (K=2; K<=2*maxN; K=K+2)
+        {
+            N = 0;
+            for (; ; )
+            {
+                if ((N + K) % 2 != 0)
+                    break;
+                N = (N+K) / 2;
+
+                if (N>maxN)
+                {
+                    break;
+                }
+                b++;
+            }
+        }
+        Console.WriteLine(b);
+    }
