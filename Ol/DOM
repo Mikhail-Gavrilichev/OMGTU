@@ -1,0 +1,56 @@
+using System;
+using System.Reflection.Metadata;
+
+
+class H
+{
+    static void Main()
+    {
+        int x = Convert.ToInt32(Console.ReadLine());
+        int y = Convert.ToInt32(Console.ReadLine());
+        int l = Convert.ToInt32(Console.ReadLine());
+        int c1 = Convert.ToInt32(Console.ReadLine());
+        int c2 = Convert.ToInt32(Console.ReadLine());
+        int c3 = Convert.ToInt32(Console.ReadLine());
+        int c4 = Convert.ToInt32(Console.ReadLine());
+        int c5 = Convert.ToInt32(Console.ReadLine());
+        int c6 = Convert.ToInt32(Console.ReadLine());
+        int Q = 0;
+        int Q1 = 0;
+        int Q2 = 0;
+        int Q3 = 0;
+        int Q4 = 0;
+        if (l <= y)
+        {
+            Q1 = (c2 + c6) * l + (c4 + c5) * 2 * (y + x);
+            Q2 = c1 * l + (c4 + c5) * ((y - l) + y + 2 * x);
+            Q3 = c1 * l + (c2 + c3) * l + (c4 + c5) * (2 * (y - l) + 2 * x);
+            Q4 = Q3;
+        }
+        else if ((l > y) && (l <= 2*(x + y)))
+        {
+            Q1 = (c2 + c6) * l + (c4 + c5) * 2 * (y + x);
+            Q2 = c1 * y + (c2 + c6) * (l - y) + (c4 + c5) * (y + 2 * x);
+            Q3 = c1 * y + (c2 + c3) * (l - y) + (c4 + c5) * (y + 2*x - (l-y));
+            Q4 = (c2 + c3) * l + (c4 + c5) * (2 * y + 2 * x - l);
+        }
+        else 
+        {
+            Q1 = (c2 + c6) * l + (c4 + c5) * 2 * (y + x);
+            Q2 = c1 * y + (c2 + c6) * (l - y) + (c4 + c5) * (y + 2 * x);
+            Q3 = c1 * y + c2 * (l - y) + c3 * (y + 2*x) +c6 * (l - 2*x - 2*y);
+            Q4 = c2 * l + c3 * (2*y + 2*x) +c6*(l - 2*y - 2*x);
+        }
+
+        Q = Q1;
+        if (Q > Q2)
+            Q = Q2;
+        if (Q > Q3)
+            Q = Q3;
+        if (Q > Q4)
+            Q = Q4;
+
+        Console.WriteLine("Минимальная цена = {0}", Q);
+
+    }
+}
