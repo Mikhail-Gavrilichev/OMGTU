@@ -1,0 +1,134 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+#if true
+        int all = 0;
+        Console.WriteLine("Введите кол-во строчек");
+        int n = Convert.ToInt32(Console.ReadLine());
+        int[][] mas = new int[n][];
+        for (int i=0; i<n; i++)
+        {
+            Console.WriteLine("Введите кол-во элементов в строке");
+            int b = Convert.ToInt32(Console.ReadLine());
+            mas[i] = new int[b];
+            for (int j = 0; j < b; j++)
+            {
+                Console.WriteLine("Введите число");
+                all++;
+                mas[i][j]= Convert.ToInt32(Console.ReadLine());
+            }
+        }
+#else
+        int[][] mas = new int[3][];
+
+        mas[0] = new int[] { 1, 2, 5, 7, 9 };
+        mas[1] = new int[] { 0, 2, 7, 6 };
+        mas[2] = new int[] { 0, 7 };
+        int all = mas[0].Length + mas[1].Length + mas[2].Length;
+#endif
+
+        //mas1-объединение
+        int[] mas1 = new int[all];
+        int l = 0;                          //длина массива обьединения
+        mas1[0] = mas[0][0];
+        for (int i = 0; i < mas.Length; i++)
+        {
+            for (int j = 0; j < mas[i].Length; j++)
+            {
+                int a = 0;
+                for (int k = 0; k < l; k++)
+                {
+                    if (mas[i][j] == mas1[k])
+                    {
+                        a = 1;
+                        break;
+                    }
+                }
+                if (a==0)
+                {
+                    mas1[l] = mas[i][j];
+                    l++;
+                }
+            }
+        }
+        for (int i=0; i<l; i++)
+        {
+            Console.Write(mas1[i] + " ");
+        }
+
+        Console.WriteLine();
+
+
+        //mas2-пересечение
+        int l1 = 0;
+        int[] mas2 = new int[all];                       
+        mas2[0] = mas[0][0];
+
+        for (int i = 0; i < mas[0].Length; i++)
+        {
+            int a = 0;
+            for (int j = 1; j < mas.Length; j++)    
+            {
+                a = 0;
+                for (int k = 0; k < mas[j].Length; k++)
+                {
+                    if (mas[j][k] == mas[0][i])
+                    {
+                        a = 1;
+                        break;
+                    }
+                }
+                if (a == 0)
+                    break;
+            }
+            if (a == 1)
+            {
+                mas2[l1] = mas[0][i];
+                l1++;
+            }
+        }
+
+        for (int i = 0; i < l1; i++)
+        {
+            Console.Write(mas2[i] + " ");
+        }
+
+        Console.WriteLine();
+
+        //mas3 дополнение
+        int[] mas3 = new int[all];
+        int d = 0;
+        int g = 0;
+
+        for (int k = 0; k < mas.Length; k++)
+        {
+            int a = 0;
+            for (int i = 0; i < l; i++)
+            { 
+                for (int j = 0; j < mas[k].Length; j++)
+                {
+                    if (mas[k][j] == mas1[i])
+                    {
+                        a = 1;
+                    } 
+                }
+                if (a != 1)
+                {
+                    mas3[d] = mas1[i];
+                    d++;
+                }
+                a = 0;
+            }
+            for (; g < d; g++)
+            {
+                Console.Write(mas3[g] + " ");
+            }
+            Console.WriteLine();
+
+        }
+    }
+}
