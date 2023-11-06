@@ -1,0 +1,256 @@
+using System;
+using System.Text.RegularExpressions;
+
+class H
+{
+    static void Main()
+    {
+        int a = Convert.ToInt32(Console.ReadLine());
+        int b = Convert.ToInt32(Console.ReadLine());
+        int c = Convert.ToInt32(Console.ReadLine());
+
+        int Sx = Convert.ToInt32(Console.ReadLine());
+        int Sy = Convert.ToInt32(Console.ReadLine());
+        int Sz = Convert.ToInt32(Console.ReadLine());
+
+        int Fx = Convert.ToInt32(Console.ReadLine());
+        int Fy = Convert.ToInt32(Console.ReadLine());
+        int Fz = Convert.ToInt32(Console.ReadLine());
+
+        float S = 0;
+
+        //Print(Sx, Sy, Sz, Fx, Fy, Fz, a, b, c);
+        //TurnToDown(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        //Print(Sx, Sy, Sz, Fx, Fy, Fz, a, b, c);
+
+        //Console.WriteLine(a);
+        // Выводим паука на грань П1
+        if (Sx == 0)    // П5
+        {
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        }
+        else if (Sy == b)   // П4
+        {
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        }
+        else if (Sx == a)   // П3
+        {
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            TurnToRight(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        }
+        else if (Sz == c)   // П2
+        {
+            TurnToDown(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        }
+        else if (Sz == 0)   // П6
+        {
+            TurnToDown(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            TurnToDown(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            TurnToDown(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+        }
+        Print(Sx, Sy, Sz, Fx, Fy, Fz, a, b, c);
+
+        // Здесь паук всегда на лицевой грани (П1)
+        // Проверяем положение мухи
+        if (Fy == 0)
+        {
+            // Муха расположена на той-же грани, что и паук (П1)
+            S = OneEdge(Sx, Sz, Fx, Fz);
+        }
+        else if (Fy == b)
+        {
+            // Муха расположена на противоположной грани от паука (П4)
+            S = OppositeEdge(Sx, Sz, Fx, Fz, a, b, c);
+        }
+        else
+        {
+            // Муха расположена на какой-то смежной грани от паука (П2, П3, П6 или П5)
+            // Поворачиваем параллелепипед так, чтобы муха оказалась на нижней грани (П6)
+            if (Fx == a)
+            {   // Муха на П3
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            }
+            else if (Fz == c)
+            {   // Муха на П2
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            }
+            else if (Fx == 0)
+            {   // Муха на П5
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+                RotateClockwise(ref Sx, ref Sy, ref Sz, ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);
+            }
+
+            Print(Sx, Sy, Sz, Fx, Fy, Fz, a, b, c);
+
+            // Здесь муха всегда расположена на нижней грани (П6)
+
+            S = AdjacentEdge(Sx, Sz, Fx, Fy, a);    // П1 и П6
+            Console.WriteLine(string.Format("{0:f3}", S));
+        }
+
+    }
+
+
+    static float min4(float par1, float par2, float par3, float par4)
+    {
+        float min = par1;
+
+        if (min > par2)
+        {
+            min = par2;
+        }
+        if (min > par3)
+        {
+            min = par3;
+        }
+        if (min > par4)
+        {
+            min = par4;
+        }
+        return min;
+    }
+
+
+    static void PointToDown(ref int x, ref int y, ref int z, int a, int b, int c)
+    {
+        int new_x = x;
+        int new_y = c - z;
+        int new_z = y;
+
+        x = new_x;
+        y = new_y;
+        z = new_z;
+    }
+
+    static void TurnToDown(ref int Sx, ref int Sy, ref int Sz, ref int Fx, ref int Fy, ref int Fz, ref int a, ref int b, ref int c)
+    {
+        PointToDown(ref Sx, ref Sy, ref Sz, a, b, c);    // Паук
+        PointToDown(ref Fx, ref Fy, ref Fz, a, b, c);    // Муха
+
+        // оси
+        int aa = a;
+        int bb = c;
+        int cc = b;
+
+        a = aa;
+        b = bb;
+        c = cc;
+    }
+
+    static void Print(int Sx, int Sy, int Sz, int Fx, int Fy, int Fz, int a, int b, int c)
+    {
+        Console.WriteLine("S: ({0}, {1}, {2})         F: ({3}, {4}, {5})         ({6}, {7}, {8})", Sx, Sy, Sz, Fx, Fy, Fz, a, b, c);
+    }
+
+    static void PointToRight(ref int x, ref int y, ref int z, ref int a, ref int b, ref int c)
+    {
+        int new_x = b - y;
+        int new_y = x;
+        int new_z = z;
+
+        x = new_x;
+        y = new_y;
+        z = new_z;
+    }
+
+    static void TurnToRight(ref int Sx, ref int Sy, ref int Sz, ref int Fx, ref int Fy, ref int Fz, ref int a, ref int b, ref int c)
+    {
+        PointToRight(ref Sx, ref Sy, ref Sz, ref a, ref b, ref c);   // Паук
+        PointToRight(ref Fx, ref Fy, ref Fz, ref a, ref b, ref c);   // Муха
+
+        // оси
+        int aa = b;
+        int bb = a;
+        int cc = c;
+
+        a = aa;
+        b = bb;
+        c = cc;
+    }
+
+    static float OneEdge(int Sx, int Sy, int Fx, int Fy)
+    {
+        float s;
+        int dx = Sx - Fx;
+        int dy = Sy - Fy;
+        s = (float)Math.Sqrt(dx * dx + dy * dy);
+        return s;
+    }
+
+    static float OppositeEdge(int Sx, int Sy, int Fx, int Fy, int x, int y, int z)
+    {
+        float s1, s2, s3, s4;
+        int dx, dy;
+
+        dx = Sx - Fx;
+        dy = (y - Sy) + z + (y - Fy);
+        s1 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        dx = Sx - Fx;
+        dy = Sy + z + Fy;
+        s2 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        dx = (x - Sx) + z + (x - Fx);
+        dy = Sy - Fy;
+        s3 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        dx = Sx + z + Fx;
+        dy = Sy - Fy;
+        s4 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        return min4(s1, s2, s3, s4);
+    }
+
+    static void PointRotate(ref int x, ref int y, ref int z, int a, int b, int c)
+    {
+        int new_x = z;
+        int new_y = y;
+        int new_z = a - x;
+
+        x = new_x;
+        y = new_y;
+        z = new_z;
+    }
+    static void RotateClockwise(ref int Sx, ref int Sy, ref int Sz, ref int Fx, ref int Fy, ref int Fz, ref int a, ref int b, ref int c)
+    {
+        PointRotate(ref Sx, ref Sy, ref Sz, a, b, c);    // Паук
+        PointRotate(ref Fx, ref Fy, ref Fz, a, b,  c);    // Муха
+
+        // оси
+        int aa = c;
+        int bb = b;
+        int cc = a;
+
+        a = aa;
+        b = bb;
+        c = cc;
+    }
+
+    // Паук - на лицевой грани (П1), муха - на нижней (П6)
+    static float AdjacentEdge(int Sx, int Sz, int Fx, int Fy, int x)
+    {
+        int dx, dy;
+        float s1, s2, s3;
+
+        dx = Sx - Fx;
+        dy = Sz + Fy;
+        s1 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        dx = (x - Sx) + Fy;
+        dy = Sz + (x - Fx);
+        s2 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        dx = Sx + Fy;
+        dy = Sz + (x - Fx);
+        s3 = (float)Math.Sqrt(dx * dx + dy * dy);
+
+        return min4(s1, s2, s3, s3);
+    }
+
+
+
+}
