@@ -1,0 +1,119 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int m = Convert.ToInt32(Console.ReadLine());
+        int[,] mas = new int[n, m];
+
+        Fill(ref mas);
+
+        Print(mas);
+
+        Console.WriteLine("Минимальные элементы в строчке:");
+        for (int i = 0; i < mas.GetLength(0); i++)
+        {
+            Console.WriteLine(Min(mas, i));
+        }
+
+        int max = Max(mas);
+
+        Console.WriteLine("Количество элементов в столбце, равных максимальному:");
+        for (int j = 0; j < mas.GetLength(1); j++)
+        {
+            Console.WriteLine(quantity_max(mas, max, j));
+        }
+
+        transformation(ref mas);
+        Console.WriteLine("Преобразованный массив:");
+        Print(mas);
+
+    }
+    static void Fill(ref int[,] Ab)
+    {
+        int a = 0;
+
+        for (int i = 0; i < Ab.GetLength(0); i++)
+        {
+            string t = "";
+            t = Console.ReadLine();
+            string[] tv = t.Split(' ').ToArray();
+
+            for (int j = 0; j < tv.Length; j++)
+            {
+                Ab[i,j] = int.Parse(tv[j]);
+            }
+        }
+    }
+    static int Min(int[,] mas, int line)
+    {
+        int m = mas[line, 0];
+        for (int i = 0; i < mas.GetLength(1); i++)
+        {
+            if (mas[line, i] < m)
+            {
+                m = mas[line, i];
+            }
+        }
+        return m;
+    }
+    static int Max(int[,] mas)
+    {
+        int max = mas[0, 0];
+        for (int i = 0; i < mas.GetLength(0); i++)
+        {
+            for (int j = 0; j < mas.GetLength(1); j++)
+            {
+                if ((mas[i, j] > max))
+                {
+                    max = mas[i, j];
+                }
+            }
+        }
+        return max;
+    }
+    static int quantity_max (int[,] mas, int max, int j)
+    {
+        int all=0;
+        for (int i = 0; i < mas.GetLength(0); i++)
+        {
+            if (mas[i,j] == max )
+            {
+                all++;
+            }
+        }
+        return all;
+    }
+    static void string_swap(ref  int [,] mas, int i1, int i2)
+    {
+        for (int j=0; j < mas.GetLength(1); j++)
+        {
+            int a = mas[i1,j];
+            mas[i1,j]= mas[i2,j];
+            mas[i2, j] = a;
+        }
+    }
+    static void transformation(ref int[,] mas)
+    {
+        for(int k=0; k<mas.GetLength(0)/2; k++)
+        {
+            string_swap(ref mas, 2*k, 2*k+1);
+        }
+    }
+    static void Print(int[,] mas)
+    {
+        Console.WriteLine("Массив:");
+        for (int i=0;  i<mas.GetLength(0);i++)
+        {
+            for(int j=0; j<mas.GetLength(1);j++)
+            {
+                Console.Write(mas[i,j]+" ");
+            }
+            Console.WriteLine();
+        }
+    }
+
+}
