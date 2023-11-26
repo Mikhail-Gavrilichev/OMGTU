@@ -1,0 +1,229 @@
+using System;
+using System.Runtime.InteropServices;
+using static H;
+
+class H
+{
+    public struct Forma
+    {
+        public int[] mas;                   // Описание формы в прямом положении 
+        public int[] mas_revers;            // Описание формы в перевернутом положении
+        public int busy;				    // Форма занята
+    }
+
+    public struct Detal
+    {
+        public int[] mas_bottom;            // Описание нижней формы для детали
+        public int[] mas_upper;             // Описание верхней формы для детали
+
+        public int[] mas_revers_bottom;     // Описание нижней формы для повернутой детали
+        public int[] mas_revers_upper;      // Описание верхней формы для повернутой детали
+
+        public int form1;
+        public int form2;
+    }
+
+
+
+    static void Main()
+    {
+
+        int n=Convert.ToInt32(Console.ReadLine());
+
+        Detal[] detals = new Detal[n];
+        Forma[] forms = new Forma[n * 2];
+
+        string t = "";
+
+        //Детали
+        Console.WriteLine("Введите описания деталей (через пробел):");
+        for (int i = 0; i < n; i++)
+        {
+            t = Console.ReadLine();
+            string[] tv = t.Split(' ').Where(x => x != "").ToArray();
+
+            int[] mas = new int[tv.Length];
+
+            for (int j = 0; j < tv.Length; j++)
+            {
+                mas[j] = int.Parse(tv[j]);
+            }
+
+            DetalFill(ref detals, mas, i);
+        }
+
+        //Формы
+        for (int i = 0; i < n*2; i++)
+        {
+            Console.WriteLine("Введите описания форм (через пробел):");
+            t = Console.ReadLine();
+            string[] tv1 = t.Split(' ').Where(x => x != "").ToArray();
+
+            int[] mas1 = new int[tv1.Length];
+
+            for (int j = 0; j < tv1.Length; j++)
+            {
+                mas1[j] = int.Parse(tv1[j]);
+            }
+            FormsFill(ref forms, mas1, i);
+        }
+
+        if (SortForm(ref detals, ref forms, 0) == 1)
+            PrintAnswer(detals, n);
+        else
+            Console.WriteLine("Нет решения");
+    }
+
+
+
+    //---------------------------------------------------------------------------
+    // Поиск соответсвий между деталями и формами
+    // detals - массив деталей
+    // forms - массив форм
+    // i - индекс детали, с которго начать поиск соответствий
+    // Возвращает 0 - не найдено решений
+    //            1 - успех
+    //
+    static int SortForm(ref Detal[] detals, ref Forma[] forms, int i)
+    {
+        int DetCount = detals.Length;
+        if (i >= DetCount)
+            return 1;
+
+        int f1, f2;
+
+        f1 = FindForm(detals[i].mas_bottom, forms, 2 * DetCount);
+        if (f1 >= 0)
+        {
+            forms[f1].busy = 1;
+            f2 = FindForm(detals[i].mas_upper, forms, 2 * DetCount);
+            if (f2 >= 0)
+            {
+                forms[f2].busy = 1;
+                if (SortForm(ref detals, ref forms, i + 1) == 1)
+                {
+                    detals[i].form1 = f1;
+                    detals[i].form2 = f2;
+                    return 1;
+                }
+                forms[f2].busy = 0;
+            }
+            forms[f1].busy = 0;
+        }
+
+        f1 = FindForm(detals[i].mas_revers_bottom , forms, 2 * DetCount);
+        if (f1 >= 0)
+        {
+            forms[f1].busy = 1;
+            f2 = FindForm(detals[i].mas_revers_upper, forms, 2 * DetCount);
+            if (f2 >= 0)
+            {
+                forms[f2].busy = 1;
+                if (SortForm(ref detals, ref forms, i + 1) == 1)
+                {
+                    detals[i].form1 = f1;
+                    detals[i].form2 = f2;
+                    return 1;
+                }
+                forms[f2].busy = 0;
+            }
+            forms[f1].busy = 0;
+        }
+
+        return 0;
+    }
+
+    // Поиск подходящей формы для выплавки детали
+    // Если форма не найдена, то возвращается -1
+    static int FindForm(int[] form, Forma[] forms, int FormCount)
+    {
+        for (int i = 0; i < FormCount; i++)
+        {
+            if (forms[i].busy == 0)
+            {
+                if ((IsEqual(forms[i].mas, form) == 1) || (IsEqual(forms[i].mas_revers, form) == 1))
+                    return i;
+            }
+        }
+
+        return -1;
+    }
+
+    // Проверка на равенство форм
+    static int IsEqual(int[] form1, int[] form2)
+    {
+        for(int i = 0; i < 15; i++)
+        {
+            if (form1[i] != form2[i])
+                return 0;
+        }
+        return 1;
+    }
+
+    // Разбор текстовых строчек и заполнение массива форм
+    static void FormsFill(ref Forma[] forms, int[] mas1, int i)
+    {
+        int a = 0;
+
+        // Описание формы в прямом положении
+        forms[i].mas = new int [15];
+        for (int j=0; j<15; j++)
+        {
+            forms[i].mas[j] = mas1[a];
+            a++;
+        }
+
+        // Описание формы в перевёрнутом положении
+        forms[i].mas_revers = new int[15];
+        for (int j = 0; j < 15; j++)
+        {
+            forms[i].mas_revers[j] = forms[i].mas[15-j-1];
+        }
+        forms[i].busy = 0;
+    }
+
+    // Разбор текстовых строчек и заполнение массива деталей
+    static void DetalFill(ref Detal[] detals, int[] mas, int i)
+    {
+           
+        // Создаем массивы для форм
+        detals[i].mas_bottom = new int[15];         // Форма 1
+        detals[i].mas_upper = new int[15];          // Форма 2
+        detals[i].mas_revers_bottom = new int[15];  // Форма 1 перевёрнутая
+        detals[i].mas_revers_upper = new int[15];   // Форма 2 перевёрнутая
+
+        for (int j = 0; j < 5; j++)
+        {
+            // Форма 1
+            detals[i].mas_bottom[ 0 + j] = mas[ 5 - 1 - j];
+            detals[i].mas_bottom[ 5 + j] = mas[10 - 1 - j];
+            detals[i].mas_bottom[10 + j] = mas[15 - 1 - j];
+            // Форма 2
+            detals[i].mas_upper[ 0 + j] = mas[ 0 + j];
+            detals[i].mas_upper[ 5 + j] = mas[15 + j];
+            detals[i].mas_upper[10 + j] = mas[10 + j];
+            // Форма 1 перевёрнутая
+            detals[i].mas_revers_bottom[ 0 + j] = mas[15 + j];
+            detals[i].mas_revers_bottom[ 5 + j] = mas[10 + j];
+            detals[i].mas_revers_bottom[10 + j] = mas[ 5 + j];
+            // Форма 2 перевёрнутая
+            detals[i].mas_revers_upper[ 0 + j] = mas[ 5 + j];
+            detals[i].mas_revers_upper[ 5 + j] = mas[ 0 + j];
+            detals[i].mas_revers_upper[10 + j] = mas[15 + j];
+        }
+        detals[i].form1 = -1;
+        detals[i].form2 = -1;
+    }
+
+    // Печать ответа
+    static void PrintAnswer(Detal[] detals, int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (detals[i].form1 < detals[i].form2)
+                Console.WriteLine("{0} {1}", detals[i].form1 + 1, detals[i].form2 + 1);
+            else
+                Console.WriteLine("{0} {1}", detals[i].form2 + 1, detals[i].form1 + 1);
+        }
+    }
+}
