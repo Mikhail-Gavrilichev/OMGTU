@@ -1,0 +1,110 @@
+using System;
+using static H;
+
+class H
+{
+    public class Student
+    {
+        string Name;
+        string year;
+        string group;
+
+        public Student(string name, string year, string group)
+        {
+            this.Name = name;
+            this.year = year;
+            this.group = group;
+        }
+        public void Print()
+        {
+            Console.WriteLine(this.GetName() +" " + this.GetYear() + " " + this.GetGroup());
+        }
+
+        public string GetName()
+        {
+            return this.Name;
+        }
+        public string GetYear()
+        {
+            return this.year;
+        }
+        public string GetGroup()
+        {
+            return this.group;
+        }
+    }
+
+    public class StudentGroup
+    {
+        Student[] students;
+
+        public StudentGroup()
+        {
+            Console.WriteLine("Кол-во студентов");
+            int n = Convert.ToInt32(Console.ReadLine());
+
+            this.students = new Student[n];
+            for (int i = 0; i < students.Length; i++)
+            {
+                string name;
+                string year;
+                string group;
+
+                Console.WriteLine("ФИО:");
+                name = Console.ReadLine();
+                Console.WriteLine("Год:");
+                year = Console.ReadLine();
+                Console.WriteLine("Группа:");
+                group = Console.ReadLine();
+
+                students[i] = new Student(name, year, group);
+            }
+        }
+
+        public void Print()
+        {
+            for (int i = 0; i < students.Length; i++)
+            {
+                Console.Write(i+":");
+                students[i].Print();
+            }
+        }
+        public void Print1(string t)
+        {
+
+            for (int i = 0; i < students.Length; i++)
+            {
+                if (students[i].GetName() == t)
+                {
+                    students[i].Print();
+                }
+
+                if (students[i].GetYear() == t)
+                {
+                    students[i].Print();
+                }
+
+                if (students[i].GetGroup() == t)
+                {
+                    students[i].Print();
+                }
+            }
+        }
+    }
+
+    static void Main()
+    {
+        StudentGroup student_group = new StudentGroup();
+
+        student_group.Print();
+
+        string t;
+
+        Console.WriteLine("Введите критерий поиска студентов");
+        t = Console.ReadLine();
+
+        student_group.Print1(t);
+    }
+}
+
+
