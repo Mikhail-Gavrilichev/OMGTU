@@ -1,0 +1,102 @@
+using System;
+
+class H
+{
+
+    static void Main()
+    {
+        Console.Write("Введите количество серых мышек: ");
+        int n = Convert.ToInt32(Console.ReadLine()); 
+
+        Console.Write("Введите количество белых мышек: ");
+        int m = Convert.ToInt32(Console.ReadLine()); 
+
+        Console.Write("Введите номер мыши съедаемой котом: ");
+        int k = Convert.ToInt32(Console.ReadLine());
+
+        Console.Write("Введите количество серых мышек, которые должны остаться: ");
+        int n1 = Convert.ToInt32(Console.ReadLine());
+
+        Console.Write("Введите количество белых мышек, которые должны остаться: ");
+        int m1 = Convert.ToInt32(Console.ReadLine());
+
+        int N = n-1;
+        int M = m;
+        int u = 0;
+        if ((n < 1) || (m1>m) || (n1>n))    // Проверяем наличие решения
+        {
+            Console.WriteLine("Решений нет");
+            return;
+        }
+       
+        int[] mas = new int[n+m];
+
+        // 1 - серая мышь
+        // 2 - белая мышь
+        // 0 - не заполнена
+        mas[0] = 1; // Заполняем первое место серой мышью
+
+
+        for (int i = 1; i < n + m ; i++)
+        {
+            for (int j = 0; j < k; j++)
+            {
+                do
+                {
+                    u++;
+                    if (u > n + m - 1)
+                    {
+                        u = u - (n + m);
+                    }
+                }
+                while ((mas[u] == 1) || (mas[u] == 2));
+            }
+
+            if (N > n1)
+            {
+                mas[u] = 1;
+                N--;
+            }
+            else if (M > m1)
+            {
+                mas[u] = 2;
+                M--;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //После этого цикла у нас есть пустые места (n1+m1 - кол-во), их можно заполнить любыми оставшимися мышками
+        for (int i=0; i< n+m; i++)
+        {
+            if (mas[i] == 0)
+            {
+                if (N != 0)
+                {
+                    mas[i] = 1;
+                    N--;
+                }
+                else if (M != 0)
+                {
+                    mas[i] = 2;
+                    M--;
+                }
+            }    
+        }
+
+        // Вывод результата
+        for (int i = 0; i < n + m; i++)
+        {
+            if (mas[i] == 1)
+            {
+                Console.WriteLine("Серая");
+            }
+            else if (mas[i] == 2)
+            {
+                Console.WriteLine("Белая");
+            }
+        }
+    }
+}
