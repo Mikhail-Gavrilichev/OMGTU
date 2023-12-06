@@ -1,0 +1,79 @@
+using System;
+
+class H
+{
+    static int is_digit(char c)
+    {
+        if ((c >= '0') && (c <= '9'))
+            return 1;
+        else 
+            return 0;
+    }
+
+    static int get_dig(string y, ref int i)
+    {
+        // пропуск пробелов
+        for(;i < y.Length;)
+        {
+            if (is_digit(y[i]) == 1)
+                break;
+            else
+                i++;
+        }
+        int a = 0;
+        // преобразование цифр
+        for(; i < y.Length;)
+        {
+            if (is_digit(y[i]) == 0)
+                break;
+            a = a * 10 + y[i] - '0';
+            i++;
+        }
+        return a;
+    }
+
+    static void GetAB(out int a, out int b)
+    {
+        string y = "";
+        y = Console.ReadLine();
+        int i = 0;
+        a = get_dig(y, ref i);
+        b = get_dig(y, ref i);
+    }
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        int t = Convert.ToInt32(Console.ReadLine());
+
+        int s1 = t;
+        int s2 = t;
+
+        for (int j = 0; j < n; j++)
+        {
+            int a;
+            int b;
+            GetAB(out a, out b);
+
+
+            int S = s1 + b;
+            s2 = s2 + b;
+
+            if (S<s2)
+            {
+                s2 = S;
+            }
+
+            s1 = s1 + a;
+        }
+
+        if (s1>s2)
+        {
+            Console.WriteLine(s2);
+        }
+        else
+        {
+            Console.WriteLine(s1);
+        }
+    }
+}
