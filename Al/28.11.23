@@ -1,0 +1,141 @@
+using System;
+using System.Xml.Linq;
+using static H;
+
+class H
+{
+    public class Car
+    {
+        public string name;
+        public string year_of_release;
+        public string[] year_of_maintenance;
+        public string[] owners;
+        public string color;
+        public Car()
+        {
+            Console.WriteLine("Введите наименование машины");
+            this.name = Console.ReadLine();
+
+            Console.WriteLine("Введите год выпуска машины");
+            this.year_of_release = Console.ReadLine();
+
+            Console.WriteLine("Введите года тех обслуживания машины");
+            string t = "";
+            t = Console.ReadLine();
+            this.year_of_maintenance = t.Split(' ');
+
+            Console.WriteLine("Введите владельцев машины");
+            t = Console.ReadLine();
+            this.owners = t.Split(' ');
+
+            Console.WriteLine("Введите цвет машины");
+            this.color = Console.ReadLine();
+        }
+        public void Print()
+        {
+            Console.WriteLine(this.name + " " + this.year_of_release + " " + this.color);
+
+            for (int i = 0; i < year_of_maintenance.Length; i++)
+            {
+                Console.WriteLine(year_of_maintenance[i]);
+            }
+            for (int i = 0; i < owners.Length; i++)
+            {
+                Console.WriteLine(owners[i]);
+            }
+        }
+        public void Print1()
+        {
+            Console.Write(this.name + " " + this.year_of_release + " " + this.color+" ");
+        }
+
+        public bool is_name_equal(string name)
+        {
+            if (this.name == name)
+                return true;
+            return false;
+        }
+        public bool is_year_of_release_equal(string year_of_release)
+        {
+            if (this.year_of_release == year_of_release)
+                return true;
+            return false;
+        }
+
+        public bool is_year_of_maintenance_equal(string year_of_maintenance)
+        {
+            for (int i = 0; i < this.year_of_maintenance.Length; i++)
+            {
+                if (this.year_of_maintenance[i] == year_of_maintenance)
+                    return true;  
+            }
+            return false;
+        }
+    }
+
+        
+
+    static void Main()
+    {
+        int n = Convert.ToInt32(Console.ReadLine());
+        Car []Cars = new Car[n];
+
+        for (int i=0; i < n;i++)
+        {
+            Cars[i] = new Car();
+        }
+
+        Console.WriteLine("Наименование: ");
+        string name = Console.ReadLine();
+        choice_name(Cars, name);
+
+        Console.WriteLine("Год выпуска: ");
+        string year_of_release = Console.ReadLine();
+        choice_year_of_release(Cars, year_of_release);
+
+        Console.WriteLine("Год обслуживания: ");
+        string year_of_maintenance = Console.ReadLine();
+        choice_year_of_maintenance(Cars, year_of_maintenance);
+    }
+
+    static void choice_name(Car [] Cars, string name)
+    {
+        for (int i=0; i<Cars.Length; i++)
+        {
+            if (Cars[i].is_name_equal(name))
+            {
+                Cars[i].Print();
+            }
+        }
+    }
+    static void choice_year_of_maintenance(Car[] Cars, string year_of_maintenance)
+    {
+        for (int i = 0; i < Cars.Length; i++)
+        {
+            Cars[i].Print1();
+            if (Cars[i].is_year_of_maintenance_equal(year_of_maintenance))
+            {
+                Console.WriteLine("Да");
+            }
+            else
+            {
+                Console.WriteLine("Нет");
+            }  
+        }
+    }
+    static void choice_year_of_release(Car[] Cars, string year_of_release)
+    {
+        for (int i = 0; i < Cars.Length; i++)
+        {
+            if (Cars[i].is_year_of_release_equal(year_of_release))
+            {
+                Cars[i].Print();
+            }
+        }
+    }
+
+
+
+}
+
+
