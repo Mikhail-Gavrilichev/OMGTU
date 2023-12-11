@@ -1,0 +1,31 @@
+using System;
+using static H;
+
+class H
+{
+    static void Main()
+    {
+        string t = "";
+        t = Console.ReadLine();
+        string[] tv = t.Split('.');
+        int i1 = Convert.ToInt32(tv[2]);
+        int i2 = Convert.ToInt32(tv[1]);
+        int i3 = Convert.ToInt32(tv[0]);
+        string u = "";
+        u = Console.ReadLine();
+        string[] uv = u.Split('.').ToArray();
+        int j1 = Convert.ToInt32(uv[2]);
+        int j2 = Convert.ToInt32(uv[1]);
+        int j3 = Convert.ToInt32(uv[0]);
+
+        var date1 = new DateTime(i1, i2, i3);
+        var date2 = new DateTime(j1, j2, j3);
+        Int64 tick1 = date1.Ticks;
+        Int64 tick2 = date2.Ticks;
+        Int64 d = tick2 - tick1;
+        d = d / TimeSpan.TicksPerDay+1;
+        int n = Convert.ToInt32(Console.ReadLine());
+        Int64 s = (2 * n + (d - 1)) * d / 2;
+        Console.WriteLine(s);
+    }
+}
