@@ -1,0 +1,155 @@
+using System;
+using static H;
+
+class H
+{
+    public class mas_loans
+    {
+        public loan[] loans ;
+        public mas_loans()
+        {
+            Console.WriteLine("Кол-во кредитов");
+            int n = Convert.ToInt32(Console.ReadLine());
+
+            this.loans = new loan[n];
+
+            for (int i = 0; i < loans.Length; i++)
+            {
+                loans[i] = new loan();
+            }
+        }
+
+        public string Print()
+        {
+            string str="";
+            for (int i=0; i < this.loans.Length; i++)
+            {
+                str += loans[i].Print()+"\r\n";
+            }
+            return str;
+        }
+    }
+    public class loan
+    {
+        public string name;
+        public string date1;
+        public string date2;
+        public string sum;
+        public loan()
+        {
+            Console.WriteLine("Введите имя клиета");
+            this.name = Console.ReadLine();
+
+            Console.WriteLine("Введите дату выдачи кредита");
+            this.date1 = Console.ReadLine();
+
+            Console.WriteLine("Введите дату окончания кредита");
+            this.date2 = Console.ReadLine();
+
+            Console.WriteLine("Введите сумму кредита");
+            this.sum = Console.ReadLine();
+        }
+
+        public string Print()
+        {
+            string str=name + " " + date1 + " " + date2+" "+sum;
+            return str;
+        }
+    }
+
+    public class bank_employee
+    {
+        public string name;
+        public string job_title;
+        public string salary;
+        public bank_employee()
+        {
+            Console.WriteLine("Введите имя сотрудника банка");
+            this.name = Console.ReadLine();
+
+            Console.WriteLine("Введите должность сотрудника банка");
+            this.job_title = Console.ReadLine();
+
+            Console.WriteLine("Введите зарплату");
+            this.salary = Console.ReadLine();
+
+        }
+        public void Print()
+        {
+            Console.WriteLine(name);
+            Console.WriteLine(job_title);
+            Console.WriteLine(salary);
+        }
+    }
+
+    public class main_employee : bank_employee
+    {
+        public mas_loans loans;
+
+        public main_employee()
+        {
+            Console.WriteLine("Введите кредиты, которые сотрудник выдал");
+            this.loans = new mas_loans();
+        }
+        public void Print()
+        {
+            base.Print();
+            Console.WriteLine(loans.Print());
+        }
+    }
+    public class support_worker: bank_employee
+    {
+        public string department_number;
+
+        public support_worker()
+        {
+            Console.WriteLine("Введите номер отдела");
+            this.department_number = Console.ReadLine();
+        }
+        public void Print()
+        {
+            base.Print();
+            Console.WriteLine(department_number);
+        }
+    }
+
+    static void Main()
+    {
+        Console.WriteLine("Введите кол-во основных сотрудников");
+        int b = Convert.ToInt32(Console.ReadLine());
+        main_employee[] mas = new main_employee[b];
+        for (int i = 0; i < mas.Length; i++)
+        {
+            mas[i] = new main_employee();
+        }
+
+        Console.WriteLine("Введите кол-во вспомогательных сотрудников");
+        int a=Convert.ToInt32(Console.ReadLine());
+        support_worker[] mas1 = new support_worker[a];
+        for (int i = 0; i < mas.Length; i++)
+        {
+            mas1[i] = new support_worker();
+        }
+
+
+        for (int i = 0; i < mas.Length; i++)
+        {
+            Console.WriteLine(mas[i].name + " " + mas[i].loans.loans.Length);
+        }
+
+        Console.WriteLine("Введите зарпалту сотрудников");
+        string s = Console.ReadLine();
+        int k = 0;
+        for (int i = 0; i < mas1.Length; i++)
+        {
+            if (s == mas1[i].salary)
+            {
+                k++;
+            }
+        }
+        Console.WriteLine(k);
+    }
+}
+
+
+
