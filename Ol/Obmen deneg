@@ -1,0 +1,234 @@
+using System;
+using static H;
+
+class H
+{
+    public class moneysystem        // Класс описания денежной системы
+    {
+        public int n;
+        public int[] units;         // units[0] - соответствует копейкам, units[1] - рублям, unit[2] - тысячам и т.д.
+        public int[] weigth;		// вес разряда в реальных копейках.
+
+        public moneysystem(string str)
+        {
+            this.units = new int [4];
+            this.weigth = new int [4];
+            string[] tv = str.Split(' ').ToArray();
+
+            this.n =Convert.ToInt32(tv[0])-1;
+
+            for (int i = 1; i <= n; i++)
+            {
+                this.units[n-i] = int.Parse(tv[i]);
+            }
+
+            int w = 1;
+            for (int i = 0; i < n+1; i++)
+            {
+                this.weigth[i] = w;
+                w = w * this.units[i];
+            }
+        }
+
+        // Печать
+        public void Print()
+        {
+            Console.Write(this.n+" ");
+
+            for ( int i=1; i <= this.n; i++)
+            {
+                Console.Write(this.units[this.n - i] + " ");
+            }
+
+            for (int i = 1; i <= this.n+1; i++)
+            {
+                Console.Write(this.weigth[this.n+1 - i] + " ");
+            }
+
+            Console.WriteLine();
+        }
+    }
+
+    public class unlucky        // Класс описания несчаслививых чисел
+    {
+        public int n;
+        public int[] units;
+
+        public unlucky(string str)
+        {
+            this.units = new int[1000];
+            string[] tv = str.Split(' ').ToArray();
+
+            this.n = Convert.ToInt32(tv[0]);
+
+            for (int i = 0; i < n; i++)
+            {
+                this.units[i] = int.Parse(tv[i+1]);
+            }
+
+        }
+
+        // Печать
+        public void Print()
+        {
+            Console.Write(this.n + " ");
+
+            for (int i = 0; i < this.n; i++)
+            {
+                Console.Write(this.units[i] + " ");
+            }
+
+            Console.WriteLine();
+
+        }
+
+        // Сортировка несчаслививых чисел по возрастанию
+        public void sort()
+        {
+            for (int i = 0; i < this.n - 1; i++)
+            {
+                for (int k = 0; k < this.n - i -1; k++)
+                {
+                    if (this.units[k] > this.units[k + 1])
+                    {
+                        int a = this.units[k];
+                        this.units[k] = this.units[k + 1];
+                        this.units[k + 1] = a;
+                    }
+                }
+            }
+        }
+    }
+    public class money          // Класс описания денежной суммы
+    {
+        int n;
+        int[] units;       // units[0] - соответствует копейкам, units[1] - рублям, unit[2] - тысячам и т.д.
+        int s;
+
+        public money(string str)
+        {
+            this.units = new int[4];
+            string[] tv = str.Split(' ').ToArray();
+
+            this.n = tv.Length;
+
+            for (int i = 0; i < n; i++)
+            {
+                this.units[n - i - 1] = int.Parse(tv[i]);
+            }
+        }
+
+        // Печать 
+        public void Print()
+        {
+            for (int i = 0; i < this.n; i++)
+            {
+                Console.Write(this.units[this.n - i - 1] + " ");
+            }
+            Console.WriteLine();
+        }
+
+        // Преобразование числа в реальное
+        public int real_digit(int a, unlucky un)
+        {
+            for (int i = un.n-1; i >= 0; i--)
+            {
+                if (a > un.units[i])
+                {
+                    a--;
+                }
+            }
+            return a;
+        }
+
+        // Преобразование числа в виртуальное
+        public int virt_digit(int a, unlucky un)
+        {
+            for (int i = 0; i < un.n; i++)
+            {
+                if (a >= un.units[i])
+                {
+                    a++;
+                }
+            }
+            return a;
+        }
+
+        // Преобразование разрядов в реальные числа
+        public void convert_to_real (unlucky un)
+        {
+            for (int i=0; i < this.n; i++)
+            {
+                this.units[i] = real_digit(this.units[i], un);
+            }
+        }
+
+        // Преобразование разрядов в виртуальные числа
+        public void convert_to_virt(unlucky un)
+        {
+            for (int i = 0; i < this.n; i++)
+            {
+                this.units[i] = virt_digit(this.units[i], un);
+            }
+        }
+
+        // Вычисление суммарного числа копеек
+        public void getreal_kopeck(moneysystem sys)
+        {
+            this.s = 0;
+            for (int i = 0; i < this.n; i++)
+            {
+                this.s = s + this.units[i] * sys.weigth[i];
+            }
+        }
+
+        // Преобразование суммарного числа копеек в денежное выражение в денежной системе
+        public void convert_to_moneysystem(moneysystem sys)
+        {
+            this.n = 0;
+            for (int i = sys.n; i >= 0; i--)
+            {
+                int d = this.s / sys.weigth[i];
+                this.units[i] = d;
+                if ((d != 0) && (this.n == 0))
+                {
+                    this.n = i + 1;
+        
+                }
+                s = s % sys.weigth[i];
+            }
+        }
+
+    }
+
+
+    static void Main()
+    {
+        moneysystem sys1 = new moneysystem(Console.ReadLine());
+
+        unlucky udigit1 = new unlucky(Console.ReadLine());
+        udigit1.sort();
+
+        moneysystem sys2 = new moneysystem(Console.ReadLine());
+
+        unlucky udigit2 = new unlucky(Console.ReadLine());
+        udigit2.sort();
+
+        money m1=new money(Console.ReadLine());
+
+        m1.convert_to_real(udigit1);
+        
+        m1.getreal_kopeck(sys1);
+
+        m1.convert_to_moneysystem(sys2);
+
+        m1.convert_to_virt(udigit2);
+
+        m1.Print();
+
+    }
+}
+   
+
+
+
