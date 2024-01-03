@@ -1,0 +1,89 @@
+using System;
+using System.Reflection;
+using static H;
+
+class H
+{
+    public class manufactory       
+    {
+        public string name;
+        public string products;
+        public performance[] performance;        
+
+        public manufactory()
+        {
+            Console.WriteLine("Введите название цеха");
+            this.name = Console.ReadLine();
+            Console.WriteLine("Введите название продукции");
+            this.products = Console.ReadLine();
+            Console.WriteLine("Введите сколько лет работает цех");
+            int n = Convert.ToInt32(Console.ReadLine());
+            this.performance = new performance[n];
+            for (int i = 0; i<n; i++)
+            {
+                this.performance[i] = new performance();
+            }
+        }
+        public void search(int year)
+        {
+            for (int i = 0; i < performance.Length; i++)
+            {
+                if (this.performance[i].year == year)
+                {
+                    Console.WriteLine("Наименование цеха: {0}", this.name);
+                    this.performance[i].Print1();
+                    return;
+                }
+            }
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("Наименование цеха: {0}", this.name);
+            Console.WriteLine("Название продукции: {0}", this.products);
+            for (int i = 0;i<this.performance.Length;i++)
+            {
+                this.performance[i].Print1();
+            }
+        }
+    }
+    public class performance
+    {
+        public int year;
+        public int efficiency;
+        public performance()
+        {
+                Console.WriteLine("Введите год");
+                this.year = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Введите производительность цеха в {0} году", this.year);
+                this.efficiency = Convert.ToInt32(Console.ReadLine());
+        }
+        public void Print1()
+        {
+            Console.WriteLine("Год: {0} " + " " + "Производительность: {1}", this.year, this.efficiency);
+        }
+    }
+    static void Main()
+    {
+        Console.WriteLine("Введите количество цехов");
+        int t = Convert.ToInt32(Console.ReadLine());
+        manufactory[] mas = new manufactory[t];
+        for (int i=0; i<mas.Length;i++)
+        {
+            mas[i]= new manufactory();
+        }
+
+        Console.WriteLine("Введите год для поиска по годам");
+        int year= Convert.ToInt32(Console.ReadLine());
+        for (int i=0; i<mas.Length; i++)
+        {
+            mas[i].search(year);
+        }
+    }
+
+}
+
+
+
+
+
