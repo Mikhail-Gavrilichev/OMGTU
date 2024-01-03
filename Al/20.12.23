@@ -1,0 +1,123 @@
+using System;
+using static H;
+
+class H
+{
+
+    static void Main()
+    {
+        Console.WriteLine("Введите длину пути");
+        double s = Convert.ToInt32(Console.ReadLine());
+
+        Console.WriteLine("Введите количество пунктов, в которых можно остановиться");
+        int n =Convert.ToInt32(Console.ReadLine());
+        double[] mas = new double[n+1];
+        for (int k = 0; k < mas.Length-1; k++)
+        {
+            Console.WriteLine("Введите расстояние на котором расположен пункт");
+            mas[k]= Convert.ToDouble(Console.ReadLine());
+        }
+        mas[n] = s;
+
+        Console.WriteLine("Введите время рассвета (Через точку, например 11.54 - 11 часов, 54 - минуты)");
+        string t=Console.ReadLine();
+        string [] time1 = t.Split(".");
+        double t1 = Convert.ToInt32(time1[0]);
+        double t2 = Convert.ToInt32(time1[1]);
+        double T = t1 * 60 + t2;
+
+
+        Console.WriteLine("Введите время заката");
+        string q = Console.ReadLine();
+        string[] time2 = q.Split(".");
+        double q1 = Convert.ToInt32(time2[0]);
+        double q2 = Convert.ToInt32(time2[1]);
+        double Q = q1 * 60 + q2;
+
+        Console.WriteLine("Введите среднюю скорость группы");
+        double u = Convert.ToDouble(Console.ReadLine());
+        u = u / 60;
+
+        // s - путь
+        // n - кол во пунктов
+        // mas[i] - расстояние на котором расположен пункт
+        // T - время рассвета в мин
+        // Q - время заката в мин
+        // u - средняя скорость в км/мин
+
+        double h = Q - T; // время которое можно ходить в день
+        int i =1; // кол-во дней в пути
+        int j = 0; // кол-во пунктов которое мы прошли
+        double[] mas2 = new double[n]; //пункты в которых группа остановилась (1-остановка)
+        double v; // оставшееся время
+
+        if (s == 0)
+        {
+            Console.WriteLine("Некоректное условие");
+        }
+        for (;;i++)
+        {
+            v = h;
+            for (; ; j++)
+            {
+                if (j==mas.Length)
+                {
+                    if (mas[j-2] > u * v)
+                    {
+                        if (mas[j - 1] > u * h)
+                        {
+                            Console.WriteLine("Решений нет");
+                            return;
+                        }
+                        mas2[j-2] = 1;
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Количество дней в пути - {0}", i);
+                        Console.WriteLine("Пункты, в которых группа остановилась:");
+                        for (int k = 0; k < n; k++)
+                        {
+                            if (mas2[k] == 1)
+                            {
+                                Console.Write(k+1 + " ");
+                            }
+                        }
+                        return;
+                    }
+                }
+                else if (mas[j] > u * v)
+                {
+                    if (mas[j] > u * h)
+                    {
+                        Console.WriteLine("Решений нет");
+                        return;
+                    }
+                    mas2[j-1] = 1;
+
+                    for (int r = j; r < mas.Length; r++)
+                    {
+                        mas[r] = mas[r] - mas[j - 1];
+                    }            
+
+                    break;
+                }
+
+                if (j != 0)
+                {
+                    for (int r = j; r < mas.Length; r++)
+                    {
+                        mas[r] = mas[r] - mas[j - 1];
+                    }
+                }
+
+                v = h - (mas[j] / u);
+            }
+        }
+    }
+}
+
+
+
+
+
