@@ -1,0 +1,80 @@
+using System;
+using System.Reflection;
+using static H;
+
+class H
+{
+    //Создать базу данных(массив) планет (наименование, количество спутников) выдать планеты в порядке убывания количества спутников.
+    public class masplanet
+    {
+        public planet[] t;
+
+        public masplanet()
+        {
+            Console.WriteLine("Введите количество планет");
+            int g = Convert.ToInt32(Console.ReadLine());
+            t = new planet[g];
+            for (int i = 0; i < t.Length; i++)
+            {
+                t[i] = new planet();
+            }
+        }
+        public void Print1()
+        {
+            for (int i = 0; i < t.Length; i++)
+            {
+                t[i].Print();
+            }
+        }
+
+            public void Sort()
+            {
+            for (int i = 0; i < t.Length-1; i++)
+            {
+                for (int j = 0; j < t.Length - i-1; j++)
+                {
+                    if (t[j].satellite < t[j + 1].satellite)
+                    {
+                        planet g = t[j];
+                        t[j] = t[j + 1];
+                        t[j + 1] = g;
+                    }
+
+                }              
+            }
+
+                Print1();
+
+            }
+    }
+    public class planet
+    {
+        public string name;
+        public int satellite;
+
+        public planet()
+        {
+            Console.WriteLine("Введите наименование планеты");
+            this.name = Console.ReadLine();
+            Console.WriteLine("Введите количество спутников");
+            this.satellite = Convert.ToInt32(Console.ReadLine());
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("Наименование планеты: {0}", this.name);
+            Console.WriteLine("Количесиво спутников: {0}", this.satellite);
+        }
+    }
+    static void Main()
+    {
+        masplanet masplanet = new masplanet();
+        masplanet.Sort();
+    }
+
+}
+
+
+
+
+
