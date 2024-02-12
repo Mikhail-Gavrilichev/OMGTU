@@ -1,0 +1,366 @@
+
+using System;
+using System.Reflection;
+using System.Xml;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class menu
+    {
+
+        public menu()
+        {
+            for (; ; )
+            {
+                Console.WriteLine("Меню:");
+                Console.WriteLine("Создание базы данных (0)");
+                Console.WriteLine("Выход (1)");
+                int e = AD();
+                if (e==0)
+                {
+                    break;
+                }
+                else if (e == 1)
+                {
+                    x6();
+                }
+                else
+                {
+                    Console.WriteLine("Некоректый ввод");
+                }
+            }
+
+            classroom[] a = х0();
+
+            for (; ; )
+            {
+                Console.WriteLine("Меню:");
+                Console.WriteLine("Изменение записи по номеру аудитории (1)");
+                Console.WriteLine("Выборка аудиторий с возможностью разместить заданное кол-во студентов на посадочные места (2)");
+                Console.WriteLine("Выборка аудиторий с наличием компьютеров (3)");
+                Console.WriteLine("Выборка аудиторий с наличием проекторов (4)");
+                Console.WriteLine("Выборка аудиторий на заданном этаже (5)");
+                Console.WriteLine("Выход (6)");
+                int s = AD();
+                if (s == 1)
+                {
+                    х1(ref a);
+                }
+                else if (s == 2)
+                {
+                    х2(a);
+                }
+                else if (s == 3)
+                {
+                    х3(a);
+                }
+                else if (s == 4)
+                {
+                    х4(a);
+                }
+                else if (s == 5)
+                {
+                    х5(a);
+                }
+                else if (s == 6)
+                {
+                    x6();
+                }
+                else
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+            }
+
+        }
+        public classroom [] х0()
+        {  
+            Console.WriteLine("Введите кол-во аудиторий");
+            int t = AD();
+            classroom[] a = new classroom[t];
+            for (int i=0; i<a.Length; i++)
+            {
+                a[i]=new classroom();
+            }
+            return a;
+        }
+        public void х1(ref classroom[] a)
+        {
+            for (; ; )
+            {
+                Console.WriteLine("Введите номер аудиторий");
+                int t = Convert.ToInt32(Console.ReadLine()); ;
+                for (int i = 0; i < a.Length; i++)
+                {
+                    if (a[i].num == t)
+                    {
+                        a[i] = new classroom(); ;
+                        //for (int j=0; j< a.Length; j++)
+                        //{
+                            //a[j].Print();
+                        //}
+                        return;
+                    }
+                }
+                Console.WriteLine("Некоректный ввод");
+            }
+        }
+        public void х2(classroom[]a)
+        {
+            Console.WriteLine("Введите кол-во студентов, которое нужно разместить");
+            int t= Convert.ToInt32(Console.ReadLine());
+            int s = 0;
+            Console.WriteLine("Подходящие аудитории:");
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (t <= a[i].site)
+                {
+                    Console.WriteLine(a[i].num);
+                    s++;
+                }
+            }
+            if (s==0)
+            {
+                Console.WriteLine("Таких аудиторий нет");
+            }
+        }
+        public void х3(classroom[] a)
+        {
+            int t;
+            for (; ; )
+            {
+                Console.WriteLine("Наличие компьютера (0) - нет; (1) - да");               
+                t = Convert.ToInt32(Console.ReadLine());
+                if ((t == 0)||(t==1))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+            }
+            int s = 0;
+            Console.WriteLine("Подходящие аудитории:");
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (t == a[i].comp)
+                {
+                    Console.WriteLine(a[i].num);
+                    s++;
+                }
+            }
+            if (s == 0)
+            {
+                Console.WriteLine("Таких аудиторий нет");
+            }
+        }
+        public void х4(classroom[] a)
+        {
+            int t;
+            for (; ; )
+            {
+                Console.WriteLine("Наличие пректора (0) - нет; (1) - да");
+                t = Convert.ToInt32(Console.ReadLine());
+                if ((t == 0) || (t == 1))
+                {
+                    break;
+                }
+                else
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+            }
+            int s = 0;
+            Console.WriteLine("Подходящие аудитории:");
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (t == a[i].proj)
+                {
+                    Console.WriteLine(a[i].num);
+                    s++;
+                }
+            }
+            if (s == 0)
+            {
+                Console.WriteLine("Таких аудиторий нет");
+            }
+        }
+        public void х5(classroom[] a)
+        {
+            int t;
+            Console.WriteLine("Введите этаж");
+            t = Convert.ToInt32(Console.ReadLine());
+            int s = 0;
+            Console.WriteLine("Подходящие аудитории:");
+            for (int i = 0; i < a.Length; i++)
+            {
+                if (t == a[i].floor)
+                {
+                    Console.WriteLine(a[i].num);
+                    s++;
+                }
+            }
+            if (s == 0)
+            {
+                Console.WriteLine("Таких аудиторий нет");
+            }
+        }
+        public void x6()
+        {
+            Environment.Exit(0);
+        }
+        public static int AD()
+        {
+            for (; ; )
+            {
+                int s;
+                int e = 0;
+                char[] g;
+                string t = "";
+                t = Console.ReadLine();
+                g = t.ToCharArray();
+                for (int i = 0; i < g.Length; i++)
+                {
+                    if ((g[i] == '1') || (g[i] == '2') || (g[i] == '3') || (g[i] == '4') || (g[i] == '5') || (g[i] == '6') || (g[i] == '7') || (g[i] == '8') || (g[i] == '9') || (g[i] == '0'))
+                    {
+                        e++;
+                    }
+
+                }
+                if (e == g.Length)
+                {
+                    s = Convert.ToInt32(t);
+                    return s;
+                }
+                else
+                {
+                    Console.WriteLine("Некорентый ввод");
+                }    
+            }
+        }
+     
+    }
+    public class classroom
+    {
+        public int num;
+        public int floor;
+        public int site;
+        public int comp;
+        public int proj;
+
+        public classroom()
+        {
+            char[] g;
+            for (; ; )
+            {
+                Console.WriteLine("Введите номер аудитории");
+                string t = "";
+                t = Convert.ToString(menu.AD());
+                g = t.ToCharArray();
+                if (g[0] == '0')
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+                else if (g.Length != 3)
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+                else
+                {
+                    this.num = Convert.ToInt32(t);
+                    break;
+                }
+            }
+
+            this.floor = Convert.ToInt32(g[0].ToString());
+
+            for (; ; )
+            {
+                Console.WriteLine("Введите кол-во мест в аудитории");
+                int u= menu.AD();
+                if ((u < 10) || (u > 200))
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+                else
+                {
+                    this.site = u;
+                    break;
+                }
+            }
+
+            for (; ; )
+            {
+                Console.WriteLine("Наличие компьютера в аудитории (1 - есть, 0 - нет)");
+                int u = menu.AD();
+                if ((u !=0) & (u!=1))
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+                else
+                {
+                    this.comp = u;
+                    break;
+                }
+            }
+
+            for (; ; )
+            {
+                Console.WriteLine("Наличие проектора в аудитории (1 - есть, 0 - нет)");
+                int u = menu.AD();
+                if ((u != 0) & (u != 1))
+                {
+                    Console.WriteLine("Некоректный ввод");
+                }
+                else
+                {
+                    this.proj = u;
+                    break;
+                }
+            }   
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("Номер:       " +this.num);
+            Console.WriteLine("Этаж:        " +this.floor);
+            Console.WriteLine("Кол-во мест: " +this.site);
+
+            if (this.comp == 1)
+            {
+                Console.WriteLine("Компьютеры:  В наличии");
+            }
+            else
+            {
+                Console.WriteLine("Компьютеры:  Отсутствует");
+            }
+
+            if (this.proj == 1)
+            {
+                Console.WriteLine("Проекторы:   В наличии");
+            }
+            else
+            {
+                Console.WriteLine("Проекторы:   Отсутствует");
+            }
+
+
+        }
+    }
+    static void Main()
+    {
+        menu menu = new menu();
+
+       // classroom p = new classroom();
+       //p.Print(); 
+    }
+
+}
+
+
+
+
+
