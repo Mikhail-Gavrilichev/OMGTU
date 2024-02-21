@@ -1,0 +1,273 @@
+
+using System;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class graph
+    {
+        public edge[] all;       // массив ребер
+        public int n;            // кол-во рёбер в массиве
+        public int s;            // длина пути
+        public string [] points; // массив использованных вершин
+        public int pointlenght;  // кол-во исполбзованных вершин
+        public string way;       // путь в виде строки
+        public graph(int a, int t)
+        {
+            this.all = new edge[a];
+            this.points = new string[t];
+            this.n = 0;
+            this.s = 0;
+            this.way = "";
+            this.pointlenght = 0;
+        }
+    }
+    public class edge
+    {
+        public int s;
+        public string point1;
+        public string point2;
+
+        public edge()
+        {
+            Console.WriteLine("Введите вершину ребра");
+            this.point1 = Console.ReadLine();
+            Console.WriteLine("Введите вершину ребра");
+            this.point2 = Console.ReadLine();
+            Console.WriteLine("Введите длину ребра");
+            this.s = Convert.ToInt32(Console.ReadLine());
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("{0},{1} =  {2}", this.point1, this.point2, this.s);
+        }
+    }
+
+    static int IsPresent(string[] p, string name)
+    {
+        for (int i = 0; i < p.Length; i++)
+        {
+            if (p[i] == name)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    static void sort(ref edge[] s)
+    {
+        edge g;
+        for (int j = 0; j < s.Length-1; j++)
+        {
+            for (int i = 0; i < s.Length - 1; i++)
+            {
+                if (s[i].s > s[i+1].s)
+                {
+                    g = s[i];
+                    s[i] = s[i+1];
+                    s[i+1] = g;
+                }
+            }
+        }
+        return;
+    }
+    static int is_include(edge s, string[] p)
+    {
+        if ((IsPresent(p, s.point1) == 1) && (IsPresent(p, s.point2) == 1))
+        {
+            return 0;
+        }
+        return 1;
+    }
+
+    // поиска индекса графа по точке
+    //
+    static int find_index_by_point(graph[] mas1, string point, int i_start)
+    {
+        for (int i = i_start; i<mas1.Length; i++)
+        {
+            for (int j=0; j < mas1[i].points.Length; j++)
+            {
+                if (mas1[i].points[j]==point)
+                return 1;
+            }
+        }
+        return -1;
+    }
+    //
+
+    //
+    static int find_index(graph[] mas1, edge a, out int point_index)
+    {
+        for (int i=0; i<mas1.Length; i++)
+        {
+            if (IsPresent(mas1[i].points, a.point1)==1)
+            {
+                point_index = 0;
+                return i;
+            }
+            if (IsPresent(mas1[i].points, a.point2) == 1)
+            {
+                point_index = 1;
+                return i;
+            }
+        }
+        point_index = -1;
+        return -1;
+    }
+    //
+        // Добавляем вершины в массив точек
+    public void AddPoint(ref string[] p, edge h, ref int pointindex)
+    {
+        int g = 0;
+        int g1 = 0;
+        for (int i = 0; i < pointindex; i++)
+        {
+            if (h.point1 == p[i])
+            {
+                g = 1;
+                break;
+            }
+        }
+        for (int i = 0; i < pointindex; i++)
+        {
+            if (h.point2 == p[i])
+            {
+                g1 = 1;
+                break;
+            }
+        }
+
+        if (g == 0)
+        {
+            p[pointindex++] = h.point1;
+        }
+        if (g1==0)
+        {
+            p[pointindex++] = h.point2;
+        }
+    }
+
+    static void add_egde_to_empty_graph(ref graph []g, edge a)
+    {
+        for (int i=0; i< g.Length; i++)
+        {
+            if (g[i].n==0)
+            {
+                add_egde_to_graph(ref g[i], a);
+                return;
+            }
+        }
+    }
+
+    // добавление грани в граф
+    static void add_egde_to_graph(ref graph g, edge a)
+    {
+        g.all[g.n++] = a;
+        g.s += a.s;
+
+        if (IsPresent(g.points, a.point1)==0)
+        {
+            g.points[g.pointlenght++]= a.point1;
+        }
+
+        if (IsPresent(g.points, a.point2)==0)
+        {
+            g.points[g.pointlenght++] = a.point2;
+        }
+        g.way += a.point2 + a.point1 + " ";
+    }
+
+    // переписываем граф g1 в граф g
+    static void add_grapf_to_graph(ref graph g, ref graph g1)
+    {
+        for (int i=0; i<g1.n; i++)
+        {
+            add_egde_to_graph(ref g, g1.all[i]);
+        }
+        g1.n = 0;
+        g1.s = 0;
+        g1.way = "";
+        g1.pointlenght = 0;
+    }
+
+    static void Main()
+    {
+        // Ввод данных
+        int S = 0;
+        string way = "";
+        Console.WriteLine("Введите общее кол-во точек");
+        int t = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Введите кол-во ребер");
+        int a = Convert.ToInt32(Console.ReadLine());
+
+        edge[] mas = new edge[a];
+        for (int i = 0; i < a; i++)
+        {
+            mas[i] = new edge();
+        }
+        sort(ref mas);
+        //
+        graph[] mas1= new graph[a];
+        for (int i = 0; i < a; i++)
+            mas1[i] = new graph(a, t);
+
+        add_egde_to_graph(ref mas1[0], mas[0]);
+
+        // Перебираем все грани
+        for (int i = 1; i < a; i++)
+        {
+            int point_index;
+            int index= find_index(mas1, mas[i], out point_index);
+
+            if (index == -1)
+            {
+                add_egde_to_empty_graph(ref mas1, mas[i]);
+            }
+            else
+            {
+                if (is_include(mas[i], mas1[index].points)==0)
+                    continue;
+
+                add_egde_to_graph(ref mas1[index], mas[i]);
+                string second_point;
+                if (point_index == 0) // point1
+                {
+                    second_point = mas[i].point2; 
+                }
+                else                  // point2
+                {
+                    second_point = mas[i].point1;
+                }
+                int second_index = find_index_by_point(mas1, second_point, index + 1);
+
+                if (second_index > -1)
+                {
+                    add_grapf_to_graph(ref mas1[index], ref mas1[second_index]);
+                }
+
+                if (mas1[index].pointlenght == t)
+                    break;
+            }     
+        }
+
+        Console.WriteLine(mas1[0].s);
+        Console.WriteLine(mas1[0].way);
+    }
+
+}
+
+
+
+
+
+
+
