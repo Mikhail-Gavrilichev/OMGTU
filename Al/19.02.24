@@ -1,0 +1,338 @@
+
+using System;
+using System.Collections;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class graph
+    {
+        public edge[] all;       // массив ребер
+        public int n;            // кол-во рёбер в массиве
+        public int s;            // длина пути
+        public string[] points; // массив использованных вершин
+        public int pointlenght;  // кол-во исполбзованных вершин
+        public string way;       // путь в виде строки
+        public graph(int a, int t)
+        {
+            this.all = new edge[a];
+            this.points = new string[t];
+            this.n = 0;
+            this.s = 0;
+            this.way = "";
+            this.pointlenght = 0;
+        }
+    }
+    public class edge
+    {
+        public int s;
+        public string point1;
+        public string point2;
+
+        public edge()
+        {
+            Console.WriteLine("Введите вершину ребра");
+            this.point1 = Console.ReadLine();
+            Console.WriteLine("Введите вершину ребра");
+            this.point2 = Console.ReadLine();
+            Console.WriteLine("Введите длину ребра");
+            this.s = Convert.ToInt32(Console.ReadLine());
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("{0},{1} =  {2}", this.point1, this.point2, this.s);
+        }
+    }
+
+    static void A1()
+    {
+        Console.WriteLine("Введите кол-во элементов в массиве");
+        int n = Convert.ToInt32(Console.ReadLine());
+        int[] Mas = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            Console.WriteLine("Введите число");
+            Mas[i] = Convert.ToInt32(Console.ReadLine());
+        }
+        for (; ; )
+        {
+            Console.WriteLine("Count      1"); 
+            Console.WriteLine("BinSearch  2"); 
+            Console.WriteLine("Copy       3"); 
+            Console.WriteLine("Find       4"); 
+            Console.WriteLine("FindLast   5"); 
+            Console.WriteLine("IndexOf    6"); 
+            Console.WriteLine("Reverse    7"); 
+            Console.WriteLine("Resize     8"); 
+            Console.WriteLine("Sort       9");
+            int t = Convert.ToInt32(Console.ReadLine());
+            if (t == 1)
+            {
+                Console.WriteLine(Mas.Count());
+            }
+            else if (t == 2)
+            {
+                Array.Sort(Mas);
+                Console.WriteLine("Введите искомое число");
+                int s = Convert.ToInt32(Console.ReadLine());
+                int w = Array.BinarySearch(Mas, s);
+                if (w >= 0)
+                    Console.WriteLine("Индекс искомого числа {0}", w);
+                else
+                    Console.WriteLine("Числа нет");
+            }
+            else if (t == 3)
+            {
+                Console.WriteLine("Введите кол-во элементов в массиве");
+                n = Convert.ToInt32(Console.ReadLine());
+                int[] Mas1 = new int[n];
+                for (int i = 0; i < n; i++)
+                {
+                    Console.WriteLine("Введите число");
+                    Mas1[i] = Convert.ToInt32(Console.ReadLine());
+                }
+                Console.WriteLine("Введите кол-во копируемых элементов");
+                int a = Convert.ToInt32(Console.ReadLine());
+                Array.Copy(Mas1, Mas, a);
+                for (int i = 0; i < Mas.Length; i++)
+                {
+                    Console.WriteLine(Mas[i]);
+                }
+            }
+            else if (t == 4)
+            {
+                Console.WriteLine("Ищем: первый элемент массива больше t");
+                Console.WriteLine("Введите t");
+                int a= Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine(Array.Find(Mas, p => (p > a)));
+                //
+            }
+            else if (t == 5)
+            {
+                Console.WriteLine("Ищем: последний элемент массива больше t");
+                Console.WriteLine("Введите t");
+                int a = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine(Array.FindLast(Mas, p => (p > a)));
+                //
+            }
+            else if (t == 6)
+            {
+                Console.WriteLine("Введите объект поиска");
+                int a1 = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Введите номер элемента с которой начать поиск");
+                int a2 = Convert.ToInt32(Console.ReadLine());
+                if (Array.IndexOf(Mas, a1, a2) >= 0)
+                    Console.WriteLine("Индекс искомого элемента {0}", Array.IndexOf(Mas, a1, a2));
+                else
+                    Console.WriteLine("Элемент не найден");
+            }
+            else if (t == 7)
+            {
+                Array.Reverse(Mas);
+                for (int i = 0; i < Mas.Length; i++)
+                    Console.WriteLine(Mas[i]);
+            }
+            else if (t == 8)
+            {
+                Console.WriteLine("Введите кол-во элементов");
+                int a1 = Convert.ToInt32(Console.ReadLine());
+                Array.Resize(ref Mas, a1);
+                for (int i = 0; i < Mas.Length; i++)
+                    Console.WriteLine(Mas[i]);
+            }
+            else if (t == 9)
+            {
+                Array.Sort(Mas);
+                for (int i = 0; i < Mas.Length; i++)
+                    Console.WriteLine(Mas[i]);
+            }
+        }
+    }
+    public static void PrintValues(IEnumerable myList)
+    {
+        foreach (Object obj in myList)
+            Console.Write("   {0}", obj);
+        Console.WriteLine();
+    }
+    static void A2()
+    {
+        int n=0;
+        ArrayList Mas = new ArrayList();
+
+        for (; ; )
+        {
+            Console.WriteLine("Count      1"); 
+            Console.WriteLine("BinSearch  2");
+            Console.WriteLine("Copy       3");
+            Console.WriteLine("IndexOf    4");
+            Console.WriteLine("Insert     5");
+            Console.WriteLine("Reverse    6");
+            Console.WriteLine("Sort       7");
+            Console.WriteLine("Add        8"); 
+            int t = Convert.ToInt32(Console.ReadLine());
+            if (t == 1)
+            {
+                Console.WriteLine("Кол-во элементов: {0}",Mas.Count);
+            }
+            else if (t == 2)
+            {
+                Mas.Sort();
+                Console.WriteLine("Введите искомый элемент");
+                string s=Console.ReadLine();
+                int w = Mas.BinarySearch(s);
+                if (w > 0)
+                    Console.WriteLine("Индекс искомого элемента {0}", w);
+                else
+                    Console.WriteLine("элемента нет");
+            }
+            else if (t == 3)
+            {
+                string[] Mas1 = new string[n];
+                for (int i = 0; i < n; i++)
+                {
+                    Console.WriteLine("Введите элемент массива");
+                    Mas1[i] = Console.ReadLine();
+                }
+                Mas.CopyTo(Mas1);
+                for(int i = 0;i<n;i++)
+                    Console.WriteLine(Mas1[i]);
+            }
+            else if (t == 4)
+            {
+                Console.WriteLine("Введите искомый элемент");
+                int g = Mas.IndexOf(Console.ReadLine());
+                if (g >= 0)
+                Console.WriteLine("Индекс элемента: {0}",g);
+                else
+                    Console.WriteLine("элемента нет");
+            }
+            else if (t == 5)
+            {
+                Console.WriteLine("Введите индекс по которому вставляется объект");
+                int g = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Введите объект");
+                Mas.Insert(g, Console.ReadLine());
+                Console.Write("Значения в массиве:");
+                PrintValues(Mas);
+            }
+            else if (t == 6)
+            {
+                Mas.Reverse();
+                Console.Write("Значения в массиве:");
+                PrintValues(Mas);
+            }
+            else if (t == 7)
+            {
+                Mas.Sort();
+                Console.Write("Значения в массиве:");
+                PrintValues(Mas);
+            }
+            else if (t == 8)
+            {
+                Console.WriteLine("Введите кол-во элементов");
+                n = Convert.ToInt32(Console.ReadLine());
+                for (int i = 0; i < n; i++)
+                {
+                    Console.WriteLine("Введите элемент");
+                    string g = Console.ReadLine();
+                    Mas.Add(g);
+                }
+            }
+        }
+    }
+
+    static void A3()
+    {
+        SortedList Mas= new SortedList();
+        int n = 0;
+        for (; ; )
+        {
+            Console.WriteLine("Add                          1");
+            Console.WriteLine("IndexOfKey                   2");
+            Console.WriteLine("IndexOfValue                 3");
+            Console.WriteLine("Вывод ключа по индексу       4");
+            Console.WriteLine("Вывод значения по индексу    5");
+            int t = Convert.ToInt32(Console.ReadLine());
+            if (t == 1)
+            {
+                Console.WriteLine("Введите кол-во элементов");
+                n = Convert.ToInt32(Console.ReadLine());
+                for (int i = 0; i < n; i++)
+                {
+                    Console.WriteLine("Введите элемент");
+                    string g = Console.ReadLine();
+                    Console.WriteLine("Введите ключ элемента");
+                    string h = Console.ReadLine();
+                    Mas.Add(h, g);
+                }
+            }
+            else if (t == 2)
+            {
+                Console.WriteLine("Введите ключ искомого элемент");
+                int g = Mas.IndexOfKey(Console.ReadLine());
+                if (g >= 0)
+                    Console.WriteLine("Индекс элемента: {0}", g);
+                else
+                    Console.WriteLine("элемента нет");
+            }
+            else if (t == 3)
+            {
+                Console.WriteLine("Введите искомый элемент");
+                int g = Mas.IndexOfValue(Console.ReadLine());
+                if (g >= 0)
+                    Console.WriteLine("Индекс элемента: {0}", g);
+                else
+                    Console.WriteLine("элемента нет");
+            }
+            else if (t == 4)
+            {
+                Console.WriteLine("Введите индекс");
+                int g= Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Ключ: {0}",Mas.GetKey(g));
+            }
+            else if (t == 5)
+            {
+                Console.WriteLine("Введите индекс");
+                int g = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Элемент: {0}", Mas.GetByIndex(g));
+            }
+        }
+    }
+    static void Main()
+    {
+        Console.WriteLine("Array           1");
+        Console.WriteLine("ArrayList       2");
+        Console.WriteLine("SortedList      3");
+        for (; ; )
+        {
+            int t = Convert.ToInt32(Console.ReadLine());
+            if (t == 1)
+            {
+                A1();
+            }
+            else if (t == 2)
+            {
+                A2();
+            }
+            else if (t == 3)
+            {
+                A3();
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
