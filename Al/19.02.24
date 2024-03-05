@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections;
 using System.Drawing;
@@ -117,10 +116,10 @@ class H
             }
         }
     }
-    public static void PrintValues(IEnumerable myList)
+    public static void PrintValues(IEnumerable Mas)
     {
-        foreach (Object obj in myList)
-            Console.Write("   {0}", obj);
+        foreach (Object a in Mas)
+            Console.Write("{0}", a);
         Console.WriteLine();
     }
     static void A2()
