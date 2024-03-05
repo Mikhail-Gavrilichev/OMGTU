@@ -12,45 +12,6 @@ using static H;
 
 class H
 {
-    public class graph
-    {
-        public edge[] all;       // массив ребер
-        public int n;            // кол-во рёбер в массиве
-        public int s;            // длина пути
-        public string[] points; // массив использованных вершин
-        public int pointlenght;  // кол-во исполбзованных вершин
-        public string way;       // путь в виде строки
-        public graph(int a, int t)
-        {
-            this.all = new edge[a];
-            this.points = new string[t];
-            this.n = 0;
-            this.s = 0;
-            this.way = "";
-            this.pointlenght = 0;
-        }
-    }
-    public class edge
-    {
-        public int s;
-        public string point1;
-        public string point2;
-
-        public edge()
-        {
-            Console.WriteLine("Введите вершину ребра");
-            this.point1 = Console.ReadLine();
-            Console.WriteLine("Введите вершину ребра");
-            this.point2 = Console.ReadLine();
-            Console.WriteLine("Введите длину ребра");
-            this.s = Convert.ToInt32(Console.ReadLine());
-        }
-
-        public void Print()
-        {
-            Console.WriteLine("{0},{1} =  {2}", this.point1, this.point2, this.s);
-        }
-    }
 
     static void A1()
     {
