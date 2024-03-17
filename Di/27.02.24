@@ -1,0 +1,255 @@
+
+using System;
+using System.Drawing;
+using System.Formats.Asn1;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class edge
+    {
+        public int s;
+        public string point1;
+        public string point2;
+
+        public edge()
+        {
+            Console.WriteLine("Введите вершину ребра");
+            this.point1 = Console.ReadLine();
+            Console.WriteLine("Введите вершину ребра");
+            this.point2 = Console.ReadLine();
+            Console.WriteLine("Введите длину ребра");
+            this.s = Convert.ToInt32(Console.ReadLine());
+        }
+
+        public void Print()
+        {
+            Console.WriteLine("{0},{1} =  {2}", this.point1, this.point2, this.s);
+        }
+    }
+    public class connection
+    {
+        public string name;
+        public int s;
+    }
+
+    public class point
+    {
+        public string name;
+        public int collor=0;  // 0-белые, 1-серые, 2-чёрные
+        public connection [] points;
+        public int inde = 0;
+        public string previous_point;
+    }
+    public class way
+    {
+        public string subsequence_of_points="";
+        public int l=0;
+    }
+
+    // Проверяет есть ли точка в массиве, если есть возвращает её индекс, если нет -1
+    static int Check(point [] Mas, string p)
+    {
+        for (int i=0; i<Mas.Length; i++)
+        {
+            if (Mas[i] == null)
+                return -1;
+            if(Mas[i].name==p)
+                return i;
+        }
+        return -1;
+    }
+
+    static point[] Convert_edge_to_point(edge []mas, int t)
+    {
+        int ind = 0;
+        point []Mas =new point[t];
+        for (int i=0; i<t;i++)
+        {
+            Mas[i]=new point();
+            Mas[i].points = new connection[t];
+            for (int j = 0; j < t; j++)
+            {
+                Mas[i].points[j] = new connection();
+            }
+        }
+        for (int i = 0; i<mas.Length; i++)
+        {
+            int j = Check(Mas, mas[i].point1);
+            int j1 = Check(Mas, mas[i].point2);
+
+            // Смотрим первую точку грани
+            if (j==-1)
+            {
+                Mas[ind].name = mas[i].point1;
+                Mas[ind].points[Mas[ind].inde].name= mas[i].point2;
+                Mas[ind].points[Mas[ind].inde].s = mas[i].s;
+                Mas[ind].inde++;
+                ind++;
+            }
+            else
+            {
+                Mas[j].points[Mas[j].inde].name=mas[i].point2;
+                Mas[j].points[Mas[j].inde].s = mas[i].s;
+                Mas[j].inde++;
+            }
+
+            // Смотрим второую точку грани
+            if (j1 == -1)
+            {
+                Mas[ind].name = mas[i].point2;
+                Mas[ind].points[Mas[ind].inde].name = mas[i].point1;
+                Mas[ind].points[Mas[ind].inde].s = mas[i].s;
+                Mas[ind].inde++;
+                ind++;
+            }
+            else
+            {
+                Mas[j1].points[Mas[j1].inde].name = mas[i].point1;
+                Mas[j1].points[Mas[j1].inde].s = mas[i].s;
+                Mas[j1].inde++;
+            }
+        }
+
+
+        return Mas;
+        
+    }
+
+    static void Print_way(way[]answ)
+    {
+        for (int i=0; i < answ.Length; i++)
+        {
+            if (answ[i].subsequence_of_points!="")
+            {
+                Console.WriteLine(i);
+                Console.WriteLine(answ[i].subsequence_of_points);
+                Console.WriteLine(answ[i].l);
+            }
+        }
+    }
+
+    static void Fill_array_of_ways(point []Mas, ref way []answ)
+    {
+        for (int i=0; i<answ.Length; i++ )
+        {
+            if (find_first_white_point(Mas)==-1)
+                return;
+            fill_way(ref answ[i], ref Mas);
+        }
+    }
+    static void fill_way(ref way answ, ref point[] Mas)
+    {
+        int white = find_first_white_point(Mas);
+        // Ищет связь с след точкой
+        find_conect(ref white, ref Mas, ref answ);
+    }
+
+    static void find_conect(ref int white, ref point[] Mas, ref way answ)
+    {
+        int a = 0;
+        Mas[white].collor = 1;
+        for (int i=0; i < Mas[white].inde; i++)
+        {
+            int g = find_ind_by_name(Mas, Mas[white].points[i].name);
+
+            if (Mas[g].collor==0)
+            {
+                if (white != 0)
+                {
+                    //answ.subsequence_of_points += Mas[white].previous_point + Mas[white].name+" "; 
+                }
+                Mas[g].previous_point = Mas[white].name;
+                white = g; 
+                find_conect(ref white, ref Mas, ref answ);
+            }
+            else if (Mas[g].collor == 1)
+            {
+                //answ.subsequence_of_points += Mas[white].name + Mas[g].name + " ";
+                //white = Mas[find_ind_by_name(Mas, Mas[white].previous_point)].inde;
+            }
+            a = i;
+        }
+        if (Mas[white].previous_point==null)
+        {
+            return;
+        }
+        answ.subsequence_of_points += Mas[white].previous_point + Mas[white].name + " ";
+        answ.l += Mas[find_ind_by_name(Mas, Mas[white].name)].points[0].s;
+        white = find_ind_by_name(Mas, Mas[white].previous_point);
+    }
+
+
+    // Возвращает индекс точки по имени
+    static int find_ind_by_name(point[] Mas, string name)
+    {
+        for (int i=0; i< Mas.Length; i++ )
+        {
+            if(Mas[i].name == name)
+                return i;
+        }
+        return -1;
+    }
+
+    static int find_first_white_point(point[] Mas)
+    {
+        for (int i=0; i<Mas.Length;i++)
+        {
+            if (Mas[i].collor == 0)
+                return i;
+        }
+        return -1;
+    }
+
+
+    static void Main()
+    {
+        // Ввод данных
+        int S = 0;
+        string way = "";
+        Console.WriteLine("Введите общее кол-во точек");
+        int t = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Введите кол-во ребер");
+        int a = Convert.ToInt32(Console.ReadLine());
+
+        edge[] mas = new edge[a];
+        for (int i = 0; i < a; i++)
+        {
+            mas[i] = new edge();
+        }
+        // Ввёл рёбра
+
+
+        // Создаю массив вершин
+        point [] Mas = new point[t]; 
+        Mas = Convert_edge_to_point(mas, t);
+
+        // Создаём массив путей
+        way []answ = new way[t];
+        for (int i = 0;i < answ.Length;i++)
+        {
+            answ[i] = new way();
+        }
+
+        // Заполняем массив путей (сам алгоритм)
+        Fill_array_of_ways(Mas, ref answ);
+
+        // Печать
+        Print_way(answ);
+
+    }
+
+}
+
+
+
+
+
+
+
