@@ -1,0 +1,109 @@
+
+using System;
+using System.Collections;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class spell
+    {
+        public string action;
+        public string prefix;
+        public string postfix;
+
+        public spell(string action, string prefix, string postfix)
+        {
+            this.action = action;
+            this.prefix = prefix;
+            this.postfix = postfix;
+        }
+    }
+    static void ReadFile(string[] mas, spell[]spells, ref int massize)
+    {
+        StreamReader sr = new StreamReader("E://work//Potion Craft//Potion Craft//input.txt");
+        String Line;
+        while (true)
+        {
+            Line = sr.ReadLine();
+
+            if (Line == null)
+                break;
+            mas[massize] = parse(Line, spells, mas);
+            massize++;
+        }
+        sr.Close();
+    }
+
+    static string parse(string Line, spell []spells, string[] mas)
+    {
+        string[] t = Line.Split(" ");
+        int spell_index = GetSpellIndex(t[0], spells);
+        string answ = spells[spell_index].prefix;
+        for (int i=1; i<t.Length; i++)
+        {
+            int index= Is_digit(t[i]);
+            if (index>0)
+            {
+                answ+= mas[index-1];
+            }
+            else
+            {
+                answ+= t[i];
+            }
+        }
+        answ += spells[spell_index].postfix;
+        return answ;
+    }
+
+    static int Is_digit(string s)
+    {
+        int i;
+        if (int.TryParse(s, out i))
+        {
+            return i;
+        }
+        return -1;
+    }
+
+    static int GetSpellIndex(string t, spell []spells)
+    {
+        for (int i=0; i<spells.Length; i++)
+        {
+            if (spells[i].action==t)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    static void Main()
+    {
+        spell[] spells = new spell[4];
+        spells[0] = new spell("MIX", "MX","XM");
+        spells[1] = new spell("WATER", "WT", "TW");
+        spells[2] = new spell("DUST", "DT", "TD");
+        spells[3] = new spell("FIRE", "FR", "RF");
+
+
+        string[] mas= new string[100];
+        int massize = 0;
+        ReadFile(mas, spells, ref massize);
+        Console.WriteLine(mas[massize-1]);
+    }
+}
+
+
+
+
+
+
+
