@@ -1,0 +1,565 @@
+
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class date
+    {
+        public int year;
+        public int month;
+        public int day;
+    }
+    public class number
+    {
+        public int num1; // кто звонил
+        public int num2; // кому звонили
+        public date dat;
+        public int minute;
+
+        public number()
+        {
+            for (; ; )
+            {
+                this.dat = new date();
+                Console.WriteLine("Введите номер с которого звонили");
+
+                string t = Console.ReadLine();
+                if (t.Length != 10)
+                {
+                    continue;
+                }
+
+                int a;
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.num1 = Convert.ToInt32(t);
+
+                Console.WriteLine("Введите номер на котороый звонили");
+                t = Console.ReadLine();
+                if (t.Length != 10)
+                {
+                    continue;
+                }
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.num2 = Convert.ToInt32(t);
+                if (this.num1 == this.num2)
+                {
+                    continue;
+                }
+
+                Console.WriteLine("Введите дату звонка");
+                t = Console.ReadLine();
+                string[] mas = new string[1000000];
+                mas = t.Split(".");
+                if (mas.Length != 3)
+                {
+                    continue;
+                }
+                if ((mas[1] == null) || (mas[0] == null) || (mas[2] == null))
+                {
+                    continue;
+                }
+                int.TryParse(mas[0], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                int.TryParse(mas[1], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                int.TryParse(mas[2], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+
+                if (Convert.ToInt32(mas[0]) > 31)
+                {
+                    continue;
+                }
+                if (Convert.ToInt32(mas[1]) > 12)
+                {
+                    continue;
+                }
+                if (mas[2].Length > 4)
+                {
+                    continue;
+                }
+
+                this.dat.day = Convert.ToInt32(mas[0]);
+                this.dat.month = Convert.ToInt32(mas[1]);
+                this.dat.year = Convert.ToInt32(mas[2]);
+
+                Console.WriteLine("Кол-во минут");
+                t = Console.ReadLine();
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.minute = Convert.ToInt32(t);
+                return;
+            }
+        }
+    }
+
+
+    static void Qest1(number[] mas)
+    {
+        int num = 0;
+        for (; ; )
+        {
+            Console.WriteLine("Введите номер абонента");
+            string t = Console.ReadLine();
+            int a;
+            int.TryParse(t, out a);
+            if (a != 0)
+            {
+                if (t.Length == 10)
+                {
+                    num = Convert.ToInt32(t);
+                    break;
+                }
+            }
+        }
+
+        // сначала найдём все звонки с данного номера
+
+        // считаем кол-во его звонков всего
+        int b = 0;
+        for (int i = 0; i < mas.Length; i++)
+        {
+            if (mas[i].num1 == num)
+            {
+                b++;
+            }
+        }
+        number[] mas1 = new number[b];
+
+        int o = 0;
+        for (int i = 0; i < mas1.Length; i++)
+        {
+            for (; o < mas.Length; o++)
+            {
+                if (mas[o].num1 == num)
+                {
+                    mas1[i] = mas[o];
+                    o++;
+                    break;
+                }
+
+            }
+        }
+        // есть массив звонков абонента
+
+        date[] dats= find_dats(mas1);
+  
+        // сортируем даты
+        sort(ref dats);
+
+        // создадим массив номеров
+        int []array_of_num =Create_array_of_numbers2(mas1);
+
+        // у нас есть  массив номеров, массив дат(сортированный), массив звонков с данного номера
+        //             array_of_num    dats                       mas1
+
+
+        // до сюда всё работает
+
+        // массив для которого кол-во строк - кол-во дат, а кол-во элементов в строке - кол-во номеров
+        int[,] numers = new int[dats.Length, array_of_num.Length];
+
+        for (int i=0; i< dats.Length; i++)
+        {
+            for (int j = 0; j < array_of_num.Length; j++)
+            {
+                for (int g =0; g<mas1.Length; g++)
+                {
+                    if ((dats[i].day == mas[g].dat.day) && (dats[i].month == mas[g].dat.month) && (dats[i].year == mas[g].dat.year))
+                    {
+                        if (mas1[g].num2 == array_of_num[j])
+                        {
+                            numers[i, j]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < dats.Length; i++)
+        {
+            int f = numers[i, 0];
+            for (int j = 0; j < array_of_num.Length; j++)
+            {
+                if (f < numers[i, j])
+                {
+                    f = numers[i, j];
+                }
+            }
+            for (int j = 0; j < array_of_num.Length; j++)
+            {
+                if (f == numers[i, j])
+                {
+                    Console.Write(dats[i].day + "." + dats[i].month + "." + dats[i].year + ": ");
+                    Console.Write(array_of_num[j]);
+                    Console.WriteLine();
+                }
+            }
+        }
+    }
+
+    static int[] Create_array_of_numbers2(number[] mas)
+    {
+        int a = 1;
+        int[] t= new int[mas.Length];
+        t[0] = mas[0].num2;
+        for (int i = 0;i < mas.Length;i++)
+        {
+            int b = 0;
+            for (int j=0; j<mas.Length;j++)
+            {
+                if (mas[i].num2 == t[j])
+                {
+                    b = 1;
+                }
+            }
+            if (b != 1)
+            {
+                t[a] = mas[i].num2;
+                a++;
+            }
+        }
+        int [] Mas = new int[a];
+
+        for (int i=0; i < Mas.Length; i++)
+        {
+            Mas[i] = t[i];
+        }
+        
+        return Mas;
+    }
+
+    static void Qest2(number[] mas)
+    {
+        int [] t1 = new int[mas.Length];
+        t1[0] = mas[0].num1;
+        t1[1] = mas[0].num2;
+        int ind = 2;
+        for (int i=0; i < mas.Length; i++)
+        {
+            int b = 0;
+            int a = 0;
+            for (int j = 0; j < t1.Length; j++)
+            {
+                if (mas[i].num1 == t1[j])
+                {
+                    a = 1;
+                }
+                if (mas[i].num2 == t1[j])
+                {
+                    b = 1;
+                }
+            }
+            if (a != 1)
+            {
+                t1[ind] = mas[i].num1;
+                ind++;
+            }
+            if (b != 1)
+            {
+                t1[ind] = mas[i].num2;
+                ind++;
+            }
+        }
+
+        int[] numb = new int[ind];
+
+        for (int i=0; i < ind ; i++)
+        {
+            numb[i]= t1[i];
+        }
+
+        //numb - массив абонентов
+
+        for (int i=0; i< numb.Length;i++)
+        {
+            abb(numb[i], mas);
+        }
+
+    }
+
+    static void abb(int num, number[] mas)
+    {
+        number []t1= new number[mas.Length];
+        int ind = 0;
+        for (int i=0; i < mas.Length; i++)
+        {
+            if ((num == mas[i].num1)|| (num == mas[i].num2))
+            {
+                t1[ind] = mas[i];
+                ind++;
+            }
+        }
+
+        number[] call = new number[ind]; 
+
+        for (int i=0; i<ind;i++)
+        {
+            call[i]= t1[i];
+        }
+
+        //есть массив звонков нужного абонента
+
+        date []t2= new date[call.Length];
+
+        for (int i=0; i<call.Length; i++)
+        {
+            t2[i] = new date();
+        }
+
+        ind = 0;
+        for (int i=0; i<call.Length;i++)
+        {
+            int b = 0;
+            for (int j=0; j < t2.Length; j++)
+            if ((call[i].dat.day == t2[j].day)&& (call[i].dat.month == t2[j].month) && (call[i].dat.year == t2[j].year))
+            {
+                b = 1;
+                break;
+            }
+            if (b!=1)
+            {
+                t2[ind] = call[i].dat;
+                ind++;
+            }
+        }
+
+        date[] dats = new date[ind]; 
+        for (int i=0; i< ind; i++)
+        {
+            dats[i] = t2[i];
+        }
+
+        sort(ref dats);
+
+        int[] t3 = new int[call.Length];
+
+        ind = 0;
+        for (int i=0; i< call.Length;i++)
+        {
+            int a = 0;
+            int b = 0;
+            for (int j=0; j< t3.Length ; j++)
+            {
+                if (t3[j] == call[i].num1)
+                {
+                    a = 1;
+                }
+                if (t3[j] == call[i].num2)
+                {
+                    b = 1;
+                }
+            }
+            if (a!=1)
+            {
+                if (call[i].num1!=num)
+                {
+                    t3[ind] = call[i].num1;
+                    ind++;
+                }
+            }
+            if (b != 1)
+            {
+                if (call[i].num2 != num)
+                {
+                    t3[ind] = call[i].num2;
+                    ind++;
+                }
+            }
+        }
+
+        int []nums = new int[ind];
+
+        for (int i=0; i< ind; i++)
+        {
+            nums[i] = t3[i];
+        }
+
+        // теперь у нас есть массив номерров
+
+        int[,] anws = new int[dats.Length, nums.Length];
+
+        for (int i=0; i< dats.Length;i++)
+        {
+            for (int j=0; j< nums.Length;j++)
+            {
+                for (int g=0; g< call.Length;g++)
+                {
+                    if ((dats[i].day == call[g].dat.day)&&(dats[i].month == call[g].dat.month) && (dats[i].year == call[g].dat.year))
+                    {
+                        if ((nums[j] == call[g].num1)|| (nums[j] == call[g].num2))
+                        {
+                            anws[i, j] += call[g].minute;
+                        }
+                    }
+                }
+            }
+        }
+
+
+        for (int i=0; i<dats.Length;i++)
+        {
+            int f = anws[i,0];
+            for (int j=0; j< nums.Length;j++)
+            {
+                if (f < anws[i,j])
+                {
+                    f = anws[i,j];
+                }
+            }
+            int t = 0;
+            for (int g=0; g<nums.Length;g++)
+            {
+                if (f == anws[i,g])
+                {
+                    t = g;
+                }
+            }
+
+            Console.Write(num + ": ");
+            Console.Write(dats[i].day+".");
+            Console.Write(dats[i].month + ".");
+            Console.Write(dats[i].year + " ");
+            Console.Write(nums[t] + " ");
+            Console.Write(f);
+            Console.WriteLine();
+        }
+    }
+
+    static void sort(ref date[] mas)
+    {
+        date a;
+        for (int i = 0; i < mas.Length; i++)
+        {
+            for (int j = 0; j < mas.Length - 1; j++)
+            {
+                a = mas[j];
+                if (mas[j + 1].year > a.year)
+                {
+                    mas[j] = mas[j + 1];
+                    mas[j + 1] = a;
+                }
+            }
+        }
+
+        for (int i = 0; i < mas.Length; i++)
+        {
+            for (int j = 0; j < mas.Length - 1; j++)
+            {
+                if (mas[j].year == mas[j + 1].year)
+                {
+                    a = mas[j];
+                    if (mas[j + 1].month > a.month)
+                    {
+                        mas[j] = mas[j + 1];
+                        mas[j + 1] = a;
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < mas.Length; i++)
+        {
+            for (int j = 0; j < mas.Length - 1; j++)
+            {
+                if (mas[j].year == mas[j + 1].year)
+                {
+                    if (mas[j].month == mas[j + 1].month)
+                    {
+                        a = mas[j];
+                        if (mas[j + 1].day > a.day)
+                        {
+                            mas[j] = mas[j + 1];
+                            mas[j + 1] = a;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static date [] find_dats(number[] mas)
+    {
+        int a = 1;
+        date[] t= new date[mas.Length];
+        t[0] = mas[0].dat;
+        for (int i=1; i < mas.Length; i++)
+        {
+            t[i] = new date();
+        }
+        for (int i=0; i<mas.Length; i++)
+        {
+            int b = 0;
+            for (int j=0; j<t.Length; j++)
+            {
+                if ((mas[i].dat.day == t[j].day) & (mas[i].dat.month == t[j].month) & (mas[i].dat.year == t[j].year))
+                {
+                    b = 1;
+                    break;
+                }
+            }
+            if (b !=1)
+            {
+                t[a] = mas[i].dat;
+                a++;
+            }
+        }
+        date[] dats = new date[a];
+
+        for (int i=0; i<a; i++)
+        {
+            dats[i] = t[i];
+        }    
+        return dats;
+    }
+
+    static void Main()
+    {
+        Console.WriteLine("Введите кол-во данных");
+        int a = Convert.ToInt32(Console.ReadLine());
+        number[] mas = new number[a];
+        for (int i = 0; i < a; i++)
+        {
+            mas[i] = new number();
+        }
+        Qest1(mas);
+        Qest2(mas);
+    }
+}
+
+
+
+
+
+
+
