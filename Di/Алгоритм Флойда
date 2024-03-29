@@ -1,0 +1,120 @@
+
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class number
+    {
+
+        public number()
+        {
+
+        }
+    }
+    static int[,] create_mas()
+    {
+        int[,] mas = new int[6, 6];
+        mas[0, 1] = 10;
+        mas[0, 2] = 18;
+        mas[0, 3] = 8;
+        mas[0, 4] = int.MaxValue;
+        mas[0, 5] = int.MaxValue;
+
+        mas[1, 0] = 10;
+        mas[1, 2] = 16;
+        mas[1, 3] = 9;
+        mas[1, 4] = 21;
+        mas[1, 5] = int.MaxValue;
+
+        mas[2, 0] = int.MaxValue;
+        mas[2, 1] = 16;
+        mas[2, 3] = int.MaxValue;
+        mas[2, 4] = int.MaxValue;
+        mas[2, 5] = 15;
+
+        mas[3, 0] = 7;
+        mas[3, 1] = 9;
+        mas[3, 2] = int.MaxValue;
+        mas[3, 4] = int.MaxValue;
+        mas[3, 5] = 12;
+
+        mas[4, 0] = int.MaxValue;
+        mas[4, 1] = int.MaxValue;
+        mas[4, 2] = int.MaxValue;
+        mas[4, 3] = int.MaxValue;
+        mas[4, 5] = 23;
+
+        mas[5, 0] = int.MaxValue;
+        mas[5, 1] = int.MaxValue;
+        mas[5, 2] = 15;
+        mas[5, 3] = int.MaxValue;
+        mas[5, 4] = 23;
+        return mas;
+    }
+    static void Print(int[,] mas)
+    {
+        for (int i = 0; i <= mas.GetUpperBound(0); i++)
+        {
+            for (int j = 0; j <= mas.GetUpperBound(1); j++)
+            {
+                Console.Write(mas[i, j]+" ");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    static int min(int a, int b)
+    {
+        return a < b ? a : b;
+    }
+
+    static int summ(int a, int b)
+    {
+        if ((a== int.MaxValue)||(b== int.MaxValue))
+        {
+            return int.MaxValue;
+        }
+        return a + b;
+    }
+
+
+    static void Floid(ref int [,]mas, int ind)
+    {
+        ind--;
+        for (int i=0;  i<= mas.GetUpperBound(0); i++)
+        {
+            for (int j=0; j <= mas.GetUpperBound(1); j++)
+            {
+                mas[i, j] = min( summ(mas[i, ind], mas[ind, j]) , mas[i,j]);
+            }
+        }
+    }
+
+    static void Main()
+    {
+        int[,] mas = create_mas();
+        for (int i=1; i<=6; i++)
+            Floid(ref mas, i);
+
+
+        Print(mas);
+    }
+}
+
+
+
+
+
+
+
