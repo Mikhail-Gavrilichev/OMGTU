@@ -14,14 +14,6 @@ using static H;
 
 class H
 {
-    public class number
-    {
-
-        public number()
-        {
-
-        }
-    }
     static int[,] create_mas()
     {
         int[,] mas = new int[6, 6];
