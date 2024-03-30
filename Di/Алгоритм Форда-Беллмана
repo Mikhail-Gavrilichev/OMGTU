@@ -1,0 +1,150 @@
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    static int[,] create_mas()
+    {
+        int[,] mas = new int[5, 5];
+
+        mas[0, 0] = int.MaxValue;
+        mas[0, 1] = 1;
+        mas[0, 2] = int.MaxValue;
+        mas[0, 3] = int.MaxValue;
+        mas[0, 4] = 3;
+
+        mas[1, 0] = int.MaxValue;
+        mas[1, 1] = int.MaxValue;
+        mas[1, 2] = 8;
+        mas[1, 3] = 7;
+        mas[1, 4] = 1;
+
+        mas[2, 0] = int.MaxValue;
+        mas[2, 1] = int.MaxValue;
+        mas[2, 2] = int.MaxValue;
+        mas[2, 3] = 1;
+        mas[2, 4] = -5;
+
+        mas[3, 0] = int.MaxValue;
+        mas[3, 1] = int.MaxValue;
+        mas[3, 2] = 2;
+        mas[3, 3] = int.MaxValue;
+        mas[3, 4] = int.MaxValue;
+
+        mas[4, 0] = int.MaxValue;
+        mas[4, 1] = int.MaxValue;
+        mas[4, 2] = int.MaxValue;
+        mas[4, 3] = 4;
+        mas[4, 4] = int.MaxValue;
+
+        return mas;
+    }
+
+    static void Print(int[,] mas)
+    {
+        for (int i = 0; i <= mas.GetUpperBound(0); i++)
+        {
+            for (int j = 0; j <= mas.GetUpperBound(1); j++)
+            {
+                Console.Write(mas[i, j] + " ");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    static int min(int[,] lambda, int[,] mas, int k, int i, int n)
+    {
+        int[] x = new int[n];
+        for (int j = 0; j < n; j++)
+        {
+            x[j] = summ(lambda[j, k-1], mas[j,i]);
+        }
+
+        return x.Min();
+    }
+
+    static int summ(int a, int b)
+    {
+        if ((a == int.MaxValue) || (b == int.MaxValue))
+        {
+            return int.MaxValue;
+        }
+        return a + b;
+    }
+
+    static bool FindPath(int s, int[,] lambda, int[,] c, int n)
+    {
+        if(s == 1)
+        {
+            Console.Write("x" + s + " ");
+            return true;
+        }
+
+        int lambda_size = lambda.GetUpperBound(1) + 1;
+        int path_length = lambda[s - 1, n - 1];
+
+        for (int r = 0; r < lambda_size; r++)    // Перебор строк. i номер строки или номер вершины
+        {
+            int dp = c[r, s - 1];
+            if (dp != int.MaxValue)
+            {
+                int lam = lambda[r, n - 2];
+                if (dp + lam == path_length)
+                {
+                    if (FindPath(r + 1, lambda, c, n - 1))
+                    { 
+                        Console.Write("x" + s + " ");
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    static void Main()
+    {
+        int n = 5;
+        int[,] mas = create_mas();
+        int[,] lambda = new int [mas.GetUpperBound(0)+1, mas.GetUpperBound(1)+1];
+
+        for (int i = 1; i < mas.GetUpperBound(1) + 1; i++)
+            lambda[i, 0] = int.MaxValue;
+
+        for (int k = 1; k <= n - 1; k++)
+        {
+            lambda[0, k] = 0;
+
+            for (int i = 1; i < n; i++)
+            {
+                lambda[i, k] = min(lambda, mas, k, i, n);
+            }    
+        }
+
+        Print(lambda);
+
+
+        int point = 5;
+        int point_index = point;
+        int column_index = mas.GetUpperBound(0);
+
+        FindPath(point_index, lambda, mas, n);
+    }
+}
+
+
+
+
+
+
+
