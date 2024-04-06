@@ -1,0 +1,413 @@
+
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class date
+    {
+        public int year;
+        public int month;
+        public int day;
+    }
+    public class number
+    {
+        public int num1  // кто звонил
+        {
+            set { num1 = value;}
+            get { return num1; }
+        }
+
+        public int num2 // кому звонили
+        {
+            set { num2 = value; }
+            get { return num2; }
+
+        }
+        public date dat
+        {
+            set { dat = value; }
+            get { return dat; }
+
+        }
+        public int minute
+        {
+            set { minute = value; }
+            get { return minute; }
+
+        }
+
+        public number()
+        {
+            for (; ; )
+            {
+                this.dat = new date();
+                Console.WriteLine("Введите номер с которого звонили");
+
+                string t = Console.ReadLine();
+                if (t.Length != 10)
+                {
+                    continue;
+                }
+
+                int a;
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.num1 = Convert.ToInt32(t);
+
+                Console.WriteLine("Введите номер на котороый звонили");
+                t = Console.ReadLine();
+                if (t.Length != 10)
+                {
+                    continue;
+                }
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.num2 = Convert.ToInt32(t);
+                if (this.num1 == this.num2)
+                {
+                    continue;
+                }
+
+                Console.WriteLine("Введите дату звонка");
+                t = Console.ReadLine();
+                string[] mas = new string[1000000];
+                mas = t.Split(".");
+                if (mas.Length != 3)
+                {
+                    continue;
+                }
+                if ((mas[1] == null) || (mas[0] == null) || (mas[2] == null))
+                {
+                    continue;
+                }
+                int.TryParse(mas[0], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                int.TryParse(mas[1], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                int.TryParse(mas[2], out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+
+                if (Convert.ToInt32(mas[0]) > 31)
+                {
+                    continue;
+                }
+                if (Convert.ToInt32(mas[1]) > 12)
+                {
+                    continue;
+                }
+                if (mas[2].Length > 4)
+                {
+                    continue;
+                }
+
+                this.dat.day = Convert.ToInt32(mas[0]);
+                this.dat.month = Convert.ToInt32(mas[1]);
+                this.dat.year = Convert.ToInt32(mas[2]);
+
+                Console.WriteLine("Кол-во минут");
+                t = Console.ReadLine();
+                int.TryParse(t, out a);
+                if (a == 0)
+                {
+                    continue;
+                }
+                this.minute = Convert.ToInt32(t);
+                return;
+            }
+        }
+    }
+
+    static int Create_array_of_numbers2(number[] mas)
+    {
+        int []t = new int[mas.Length*2];
+        t[0] = mas[0].num1;
+        int ind = 1;
+        for (int i=0; i<mas.Length; i++)
+        {
+            int a = 0;
+            int b = 0;
+            for (int j=0; j<mas.Length; j++)
+            {
+                if (t[j]== mas[i].num2)
+                {
+                    a = 1;
+                }
+                if (t[j] == mas[i].num1)
+                {
+                    b = 1;
+                }
+            }
+            if (a == 0)
+            {
+                t[ind] = mas[i].num2;
+                ind++;
+            }
+            if (b == 0)
+            {
+                t[ind] = mas[i].num2;
+                ind++;
+            }
+        }
+        return ind;
+    }
+
+    static void Main()
+    {
+        //Console.WriteLine("Введите кол-во данных");
+        //int a = Convert.ToInt32(Console.ReadLine());
+        //number[] mas = new number[a];
+        //for (int i = 0; i < a; i++)
+        //{
+            //mas[i] = new number();
+        //}
+        //Console.WriteLine(Create_array_of_numbers2(mas));
+
+
+
+        Console.WriteLine("Введите первое множество");
+
+        string q= Console.ReadLine();
+        string []t11;
+        t11 = q.Split(" ");
+        int[] t1 = new int[t11.Length];
+        int a = 0;
+        for (int i=0; i < t11.Length; i++)
+        {
+            t1[i]= Convert.ToInt32(t11[i]);
+            a++;
+        }
+
+
+        Console.WriteLine("Введите второе множество");
+
+        q = Console.ReadLine();
+        t11 = q.Split(" ");
+        int[] t2 = new int[t11.Length];
+        int b = 0;
+        for (int i = 0; i < t11.Length; i++)
+        {
+            t2[i] = Convert.ToInt32(t11[i]);
+            b++;
+        }
+
+        Console.WriteLine("Введите третье множество");
+
+        q = Console.ReadLine();
+        t11 = q.Split(" ");
+        int[] t3 = new int[t11.Length];
+        int c = 0;
+        for (int i = 0; i < t11.Length; i++)
+        {
+            t3[i] = Convert.ToInt32(t11[i]);
+            c++;
+        }
+
+        Per(t1, t2, t3);
+        int[] S = Ob(t1,t2,t3);
+        Dop(t1, t2, t3, S);
+
+    }
+
+    static void Per(int[] t1, int[] t2, int[] t3)
+    {
+        int masl = t1.Length;
+        if (masl < t2.Length)
+        {
+            masl=t2.Length;
+        }
+
+        if (masl < t3.Length)
+        {
+            masl = t3.Length;
+        }
+
+
+        int[] t = new int[masl];
+        int ind = 0;
+        for (int i = 0; i < t1.Length; i++)
+        {
+            for (int j=0; j < t2.Length; j++)
+            {
+                if (t1[i] == t2[j])
+                    for (int k = 0; k < t3.Length; k++)
+                    {
+                        if (t2[j]== t3[k])
+                        {
+                            t[ind] = t3[k];
+                            ind++;
+                            break;
+                        }
+                    }
+            }
+        }
+
+        for (int i=0; i < ind; i++)
+        {
+            Console.Write(t[i]+" ");
+        }
+        Console.WriteLine();
+    }
+
+    static int[] Ob(int[] t1, int[] t2, int[] t3)
+    {
+        int ind = t1.Length;
+        int[]t= new int[t1.Length+t2.Length+t3.Length];
+        for (int i=0; i<t1.Length;i++)
+        {
+            t[i] = t1[i];
+        }
+
+        for (int i=0; i<t2.Length;i++)
+        {
+            int a = 0;
+            for (int j = 0; j < ind; j++)
+            {
+                if (t2[i] == t[j])
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a !=1)
+            {
+                t[ind] = t2[i];
+                ind++;
+            }
+        }
+
+        for (int i = 0; i < t3.Length; i++)
+        {
+            int a = 0;
+            for (int j = 0; j < ind; j++)
+            {
+                if (t3[i] == t[j])
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a != 1)
+            {
+                t[ind] = t3[i];
+                ind++;
+            }
+        }
+
+        int[] S = new int[ind];
+        for (int i = 0; i < ind; i++)
+        {
+            S[i] = t[i];
+            Console.Write(S[i]+" ");
+        }
+        Console.WriteLine();
+
+        return S;
+    }
+
+    static void Dop(int[] t1, int[] t2, int[] t3, int[]S)
+    {
+        int[] t = new int[S.Length];
+        int ind=0;
+        Console.WriteLine("Дополнение первого множества");
+        for (int i=0; i<S.Length; i++)
+        {
+            int a = 0;
+            for (int j=0; j<t1.Length; j++)
+            {
+                if (t1[j] == S[i])
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a!=1)
+            {
+                t[ind] = S[i];
+                Console.Write(t[ind] + " ");
+                ind++;
+            }
+        }
+        Console.WriteLine();
+        ind = 0;
+        t= new int[S.Length];
+
+        Console.WriteLine("Дополнение второго множества");
+        for (int i = 0; i < S.Length; i++)
+        {
+            int a = 0;
+            for (int j = 0; j < t2.Length; j++)
+            {
+                if (t2[j] == S[i])
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a != 1)
+            {
+                t[ind] = S[i];
+                Console.Write(t[ind] + " ");
+                ind++;
+            }
+        }
+        Console.WriteLine();
+        ind = 0;
+        t = new int[S.Length];
+
+        Console.WriteLine("Дополнение третьего множества");
+        for (int i = 0; i < S.Length; i++)
+        {
+            int a = 0;
+            for (int j = 0; j < t3.Length; j++)
+            {
+                if (t3[j] == S[i])
+                {
+                    a = 1;
+                    break;
+                }
+            }
+            if (a != 1)
+            {
+                t[ind] = S[i];
+                Console.Write(t[ind] + " ");
+                ind++;
+            }
+        }
+        Console.WriteLine();
+    }
+}
+
+
+
+
+
+
+
+
