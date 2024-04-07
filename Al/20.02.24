@@ -1,0 +1,149 @@
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class date
+    {
+        public int year;
+        public int month;
+        public int day;
+    }
+
+    static void Main()
+    {
+        Console.WriteLine("Введите строку");
+        Stack<char> symbols = new Stack<char>();
+        string t = Console.ReadLine();
+
+        for (int i=0; i<t.Length; i++)
+        {
+            char c= t[i];
+
+            if ((c=='(')||(c == '[') || (c == '{'))
+            {
+                symbols.Push(c);
+            }
+
+
+            if (c==')')
+            {
+                if (symbols.Pop()!= '(')
+                {
+                    Console.WriteLine("Ошибка");
+                    return;
+                }
+            }
+            if (c == '}')
+            {
+                if (symbols.Pop() != '{')
+                {
+                    Console.WriteLine("Ошибка");
+                    return;
+                }
+            }
+            if (c == ']')
+            {
+                if (symbols.Pop() != '[')
+                {
+                    Console.WriteLine("Ошибка");
+                    return;
+                }
+            }
+        }
+        Console.WriteLine("Правильно");
+
+
+        Console.WriteLine("Введите строку");
+        Stack<int> numbers = new Stack<int>();
+        t = Console.ReadLine();
+
+        for (int i = 0; i < t.Length; i++)
+        {
+            string s = Convert.ToString(t[i]);
+            int a;
+
+            if (int.TryParse(s, out a))
+            {
+                numbers.Push(a);
+            }
+            else if ((s=="+")||(s=="-")||(s=="*")||(s=="/"))
+            {
+                if (numbers.Count==2)
+                {
+                    int c;
+                    if (Operation(numbers.Pop(), numbers.Pop(), out c, s))
+                        numbers.Push(c);
+                    else
+                    {
+                        Console.WriteLine("Ошибка");
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка");
+                    return;
+                }
+            }
+        }
+
+        if (numbers.Count == 1)
+        {
+            Console.WriteLine("Результат: "+numbers.Pop());
+        }
+        else
+        {
+            Console.WriteLine("Ошибка");
+        }
+    }
+    static bool Operation(int b, int a, out int c, string s)
+    {
+        c = 0;
+        if (s == "+")
+        {
+            c = a + b; 
+            return true;
+        }
+        else if (s == "-")
+        {
+            c = a - b;
+            return true;
+        }
+        else if (s == "/")
+        {
+            if (b==0)
+            {
+                return false;
+            }
+            c = a / b;
+            return true;
+        }
+        else if (s == "*")
+        {
+            c = a * b;
+            return true;
+        }
+
+        return  false;
+    }
+}
+
+
+
+
+
+
+
+
