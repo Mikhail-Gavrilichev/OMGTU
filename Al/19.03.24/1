@@ -1,0 +1,187 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+
+class H
+{
+    public delegate int   func1(int x, int y);
+    public delegate float func2(int x, int y);
+    public delegate float func3(int x);
+
+    interface ICalculator
+    {
+        int Addition(int a, int b);
+        int Subtraction(int a, int b);
+        int Multiplication(int a, int b);
+        float Division(int a, int b);
+        float Sqrt(int a);
+        float cos(int a);
+        float sin(int a);
+    }
+
+    public class Calculator1 : ICalculator
+    {
+        int ICalculator.Addition(int a, int b)
+        {
+            return a + b;
+        }
+        int ICalculator.Subtraction(int a, int b)
+        {
+            return a - b;
+        }
+        int ICalculator.Multiplication(int a, int b)
+        {
+            return a * b;
+        }
+        float ICalculator.Division(int a, int b)
+        {
+            if (b == 0)
+            {
+                Console.WriteLine("Ошибка ввода данных");
+                return 0;
+            }
+            return a / b;
+        }
+        float ICalculator.Sqrt(int a)
+        {
+            if (a < 0)
+            {
+                Console.WriteLine("Ошибка ввода данных");
+                return 0;
+            }
+            return (float)Math.Sqrt(a);
+        }
+        float ICalculator.cos(int a)
+        {
+            return (float)Math.Cos(a);
+        }
+        float ICalculator.sin(int a)
+        {
+            return (float)Math.Sin(a);
+        }
+    }
+
+
+
+    static void Main()
+    {
+        Menu();
+    }
+    static void Menu()
+    {
+        ICalculator calculator = new Calculator1();
+
+        func1 add = calculator.Addition;
+        func1 sub = calculator.Subtraction;
+        func1 mul = calculator.Multiplication;
+        func2 div = calculator.Division;
+        func3 sqrt = calculator.Sqrt;
+        func3 cos = calculator.cos;
+        func3 sin = calculator.sin;
+
+        for (; ; )
+        {
+            Console.WriteLine("Выберите операцию:");
+            Console.WriteLine("Сложение                     - 1");
+            Console.WriteLine("Вычитание                    - 2");
+            Console.WriteLine("Умножение                    - 3");
+            Console.WriteLine("Деление                      - 4");
+            Console.WriteLine("Извелечие квадратного корня  - 5");
+            Console.WriteLine("Синус                        - 6");
+            Console.WriteLine("Косинус                      - 7");
+            Console.WriteLine("Выход                        - 8");
+
+            string q = Console.ReadLine();
+
+            if (int.TryParse(q, out int a))
+            {
+                if ((a <= 8) && (a != 0) && (a > 0))
+                {
+                    if (a == 1)
+                    {
+                        Console.WriteLine("Введите первое число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Введите второе число");
+                        int y = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: "+add(x,y));
+                    }
+                    if (a == 2)
+                    {
+                        Console.WriteLine("Введите первое число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Введите второе число");
+                        int y = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + sub(x, y));
+                    }
+                    if (a == 3)
+                    {
+                        Console.WriteLine("Введите первое число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Введите второе число");
+                        int y = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + mul(x, y));
+                    }
+                    if (a == 4)
+                    {
+                        Console.WriteLine("Введите первое число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Введите второе число");
+                        int y = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + div(x, y));
+                    }
+                    if (a == 5)
+                    {
+                        Console.WriteLine("Введите число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + sqrt(x));
+                    }
+                    if (a == 6)
+                    {
+                        Console.WriteLine("Введите число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + cos(x));
+                    }
+                    if (a == 7)
+                    {
+                        Console.WriteLine("Введите число");
+                        int x = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine("Результ: " + sin(x));
+                    }
+                    if (a == 8)
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Ошибка ввода");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Ошибка ввода");
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
