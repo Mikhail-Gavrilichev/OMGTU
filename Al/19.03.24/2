@@ -1,0 +1,95 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Net.NetworkInformation;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+
+class H
+{
+    public delegate void func1(ref car a);
+
+    interface IWash
+    {
+        void Wash(ref car a);
+    }
+
+    public class car
+    {
+        public string type;
+        public int Clean;
+        public string Number;
+        public car()
+        {
+            Console.WriteLine("Введите тип машины");
+            this.type = Console.ReadLine();
+            Console.WriteLine("Введите сколько дней прошло с помывки машины");
+            int a = Convert.ToInt32(Console.ReadLine());
+            if (a>4)
+                this.Clean = 0;
+            else
+                this.Clean = 1;
+            Console.WriteLine("Введите номер машины");
+                this.Number = Console.ReadLine();
+        }
+    }
+
+    public class garage
+    {
+        public car []cars;
+
+        public garage()
+        {
+            Console.WriteLine("Введите кол-во машин");
+            int n = Convert.ToInt32(Console.ReadLine());
+            this.cars = new car[n]; 
+            for (int i=0; i < n; i++)
+            {
+                cars[i] = new car();
+            }
+        }
+    }
+    public class Car_wash: IWash
+    {
+        public string address="AD512";
+
+        void IWash.Wash(ref car a)
+        {
+            if (a.Clean == 0)
+            {
+                Console.WriteLine("Моем автомобиль {0}", a.Number);
+                a.Clean = 1;
+            }
+        }
+    }
+
+    static void Main()
+    {
+        IWash T = new Car_wash();
+        func1 wash = T.Wash;
+
+        garage a=new garage();
+        for (int i=0; i<a.cars.Length; i++)
+        {
+            wash(ref a.cars[i]);
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
