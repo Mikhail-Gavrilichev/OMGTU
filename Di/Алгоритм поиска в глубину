@@ -1,0 +1,183 @@
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    static int[,] create_mas()
+    {
+        int[,] mas = new int[7, 7];
+
+        mas[0, 0] = 0;
+        mas[0, 1] = 1;
+        mas[0, 2] = 0;
+        mas[0, 3] = 0;
+        mas[0, 4] = 0;
+        mas[0, 5] = 0;
+        mas[0, 6] = 0;
+
+        mas[1, 0] = 1;
+        mas[1, 1] = 0;
+        mas[1, 2] = 1;
+        mas[1, 3] = 0;
+        mas[1, 4] = 0;
+        mas[1, 5] = 0;
+        mas[1, 6] = 0;
+
+        mas[2, 0] = 0;
+        mas[2, 1] = 1;
+        mas[2, 2] = 0;
+        mas[2, 3] = 0;
+        mas[2, 4] = 0;
+        mas[2, 5] = 0;
+        mas[2, 6] = 0;
+
+        mas[3, 0] = 0;
+        mas[3, 1] = 0;
+        mas[3, 2] = 0;
+        mas[3, 3] = 0;
+        mas[3, 4] = 0;
+        mas[3, 5] = 0;
+        mas[3, 6] = 1;
+
+        mas[4, 0] = 0;
+        mas[4, 1] = 0;
+        mas[4, 2] = 0;
+        mas[4, 3] = 0;
+        mas[4, 4] = 0;
+        mas[4, 5] = 0;
+        mas[4, 6] = 0;
+
+        mas[5, 0] = 0;
+        mas[5, 1] = 0;
+        mas[5, 2] = 0;
+        mas[5, 3] = 0;
+        mas[5, 4] = 0;
+        mas[5, 5] = 0;
+        mas[5, 6] = 0;
+
+        mas[6, 0] = 0;
+        mas[6, 1] = 0;
+        mas[6, 2] = 0;
+        mas[6, 3] = 1;
+        mas[6, 4] = 0;
+        mas[6, 5] = 0;
+        mas[6, 6] = 0;
+
+        return mas;
+    }
+
+
+    static void Main()
+    {
+        int n = 7;
+        int[,] O = create_mas();
+        Console.WriteLine("Введите вершину, от которой ведётся поиск");
+        int a = Convert.ToInt32(Console.ReadLine())-1;
+        string S = "";
+        int[] mas = new int[n];
+
+
+        int b = 0;
+        for (int q = 0; q < n; q++)
+        {
+            if (mas[q] == 0)
+            {
+                b++;
+            }
+        }
+
+
+        Search(a, ref mas, O, S);
+
+
+        int e = 0;
+        for (int g = 0; g < n; g++)
+        {
+            if (mas[g] == 0)
+            {
+                e++;
+            }
+        }
+        if (b != e)
+        {
+            Console.WriteLine();
+        }
+
+
+        for (int i=0; i < n; i++)
+        {
+            for (int j=0;j<n; j++)
+            {
+                b = 0;
+                for (int q = 0; q < n; q++)
+                {
+                    if (mas[q] == 0)
+                    {
+                        b++;
+                    }
+                }
+
+                if (mas[j]==0)
+                {
+                    Search(j, ref mas, O, S);
+                    e = 0;
+                    for (int g = 0; g < n; g++)
+                    {
+                        if (mas[g] == 0)
+                        {
+                            e++;
+                        }
+                    }
+                    if (b!=e)
+                    {
+                        Console.WriteLine();
+                    }
+                }
+            }
+        }
+
+        Console.WriteLine("Несвязанные вершины:");
+        for (int i = 0; i < mas.Length; i++)
+        {
+            if (mas[i]==0)
+                Console.WriteLine(i+1);
+        }
+
+    }
+
+    static void Search(int a, ref int[] mas, int[,]O, string S)
+    {
+        int b = -1;
+        for (int i = 0; i < O.GetUpperBound(0)+1; i++)
+        {
+            if (O[a,i]==1) 
+            {
+                b = a;
+                if (mas[i]!=1)
+                {
+                    mas[a] = 1;
+                    mas[i] = 1;
+                    Console.Write((a + 1) + "-" +(i+1)+" ");
+                    Search(i,ref mas, O, S);   
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+
+
