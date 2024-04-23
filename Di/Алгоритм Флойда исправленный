@@ -1,0 +1,221 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+class H
+{
+    // Создание массива вершин, и матрицы смежности
+    static void create_mas(out int[,] dist, out int[,] next, string str, out string[] pointsT)
+    {
+        string[] mas1 = str.Split(", ");
+        string[][] mas = new string[mas1.Length][]; // Каждый элемент mas - это "Имя вершины 1", "Имя вершины 2", "путь из 1 в 2"
+        for (int i = 0; i < mas.Length; i++)
+        {
+            mas[i] = mas1[i].Split('-', ' ');
+        }
+        string[] points1 = new string[mas.Length * 2];
+        int ind = 0;
+        for (int i = 0; i < mas.Length; i++)
+        {
+            int a = 0;
+            int b = 0;
+            for (int j = 0; j < points1.Length; j++)
+            {
+                if (mas[i][0] == points1[j])
+                {
+                    a = 1;
+                }
+            }
+            if (a != 1)
+            {
+                points1[ind] = mas[i][0];
+                ind++;
+            }
+            for (int j = 0; j < points1.Length; j++)
+            {
+                if (mas[i][1] == points1[j])
+                {
+                    b = 1;
+                }
+            }
+            if (b != 1)
+            {
+                points1[ind] = mas[i][1];
+                ind++;
+            }
+        }
+        string[] points = new string[ind];
+        for (int i = 0; i < ind; i++)
+        {
+            points[i] = points1[i];
+        }
+        int[,] Mas = new int[ind, ind];
+        next = new int[ind, ind];
+        for (int i = 0; i < mas.Length; i++)
+        {
+            for (int j = 0; j < points.Length; j++)
+            {
+                if (mas[i][0] == points[j])
+                {
+                    for (int g = 0; g < points.Length; g++)
+                    {
+                        if (mas[i][1] == points[g])
+                        {
+                            Mas[j, g] = Convert.ToInt32(mas[i][2]);
+                        }
+                    }
+                }
+                if (mas[i][1] == points[j])
+                {
+                    for (int g = 0; g < points.Length; g++)
+                    {
+                        if (mas[i][0] == points[g])
+                        {
+                            Mas[j, g] = Convert.ToInt32(mas[i][2]);
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < ind; i++)
+        {
+            for (int j = 0; j < ind; j++)
+            {
+                if (i == j)
+                {
+                    Mas[i, j] = 0;
+                    next[i, j] = i;
+                }
+                else if (Mas[i, j] == 0)
+                {
+                    Mas[i, j] = int.MaxValue;
+                    next[i, j] = -1;
+                }
+                else
+                {
+                    next[i, j] = j;
+                }
+            }
+        }
+        pointsT = points;
+        dist = Mas;
+    }
+    // Заполнение массива константой
+    // Нахождение суммы с учётом бесконечности
+    static int summ(int a, int b)
+    {
+        if ((a == int.MaxValue) || (b == int.MaxValue))
+        {
+            return int.MaxValue;
+        }
+        return a + b;
+    }
+    // Применение алгоритма Флойда
+    static void Floid(ref int[,] mas, ref int[,] next, int ind)
+    {
+        ind--;
+        for (int i = 0; i <= mas.GetUpperBound(0); i++)
+        {
+            for (int j = 0; j <= mas.GetUpperBound(1); j++)
+            {
+                int sum = summ(mas[i, ind], mas[ind, j]);
+                if (mas[i, j] > sum)
+                {
+                    mas[i, j] = sum;
+                    next[i, j] = next[i, ind];
+                }
+            }
+        }
+    }
+    static void Main()
+    {
+        string str = "С-К 26, С-П 19, С-Р 86, К-Д 16, К-Л 66, П-Н 4, П-В 51, Д-В 21, Н-М 21, М-Л 24, М-В 34, Л-А 13, Л-Ж 43, А-Б 25, Ж-Р 31, Ж-Б 44, Б-Р 22, В-Ж 9, Т-Т 0";
+        string[] points;
+        int[,] mas;
+        int[,] next;
+        create_mas(out mas, out next, str, out points);
+        Console.WriteLine("Список вершин");
+        for (int i = 0; i < points.Length; i++)
+        {
+            Console.WriteLine("Вершина: " + points[i]);
+        }
+        Console.WriteLine("Введите начльную вершину");
+        string a = Console.ReadLine();
+        Console.WriteLine("Введите искомую вершину");
+        string b = Console.ReadLine();
+        int t1 = 0;
+        int t2 = 0;
+        for (int i = 0; i < points.Length; i++)
+        {
+            if (a == points[i])
+            {
+                t1 = 1;
+            }
+            if (b == points[i])
+            {
+                t2 = 1;
+            }
+        }
+        if ((t1 != 0) || (t2 != 0))
+        {
+            for (int i = 1; i <= mas.GetUpperBound(0); i++)
+                Floid(ref mas, ref next, i);
+            int number = 0;
+            int number1 = 0;
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (a == points[i])
+                {
+                    number = i;
+                }
+                if (b == points[i])
+                {
+                    number1 = i;
+                }
+            }
+            if (mas[number, number1] == int.MaxValue)
+            {
+                Console.WriteLine("-1");
+            }
+            else
+            {
+                Console.WriteLine(mas[number, number1]);
+            }
+            if (mas[number, number1] != int.MaxValue)
+            {
+                Console.Write(points[number] + " ");
+                WriteWay(next, points, number, number1);
+                Console.WriteLine();
+            }
+        }
+        else
+        {
+            Console.WriteLine("Некорректный ввод");
+        }
+    }
+    static void WriteWay(int[,] next, string[] points, int u, int v)
+    {
+        if (next[u, v] == -1)
+        {
+            return;
+        }
+        int a = u;
+        while (a != v)
+        {
+            a = next[u, v];
+            Console.Write(points[next[u, v]] + " ");
+            WriteWay(next, points, a, v);
+            return;
+        }
+    }
+}
