@@ -1,0 +1,149 @@
+using System;
+using System.Collections;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    static int[,] create_mas()
+    {
+        int[,] mas = new int[6, 6];
+
+        mas[0, 0] = int.MaxValue;
+        mas[0, 1] = 7;
+        mas[0, 2] = 9;
+        mas[0, 3] = int.MaxValue;
+        mas[0, 4] = int.MaxValue;
+        mas[0, 5] = 14;
+
+        mas[1, 0] = 7;
+        mas[1, 1] = int.MaxValue;
+        mas[1, 2] = 10;
+        mas[1, 3] = 15;
+        mas[1, 4] = int.MaxValue;
+        mas[1, 5] = int.MaxValue;
+
+        mas[2, 0] = 9;
+        mas[2, 1] = 10;
+        mas[2, 2] = int.MaxValue;
+        mas[2, 3] = 11;
+        mas[2, 4] = int.MaxValue;
+        mas[2, 5] = 2;
+
+        mas[3, 0] = int.MaxValue;
+        mas[3, 1] = 15;
+        mas[3, 2] = 11;
+        mas[3, 3] = int.MaxValue;
+        mas[3, 4] = 6;
+        mas[3, 5] = int.MaxValue;
+
+        mas[4, 0] = int.MaxValue;
+        mas[4, 1] = int.MaxValue;
+        mas[4, 2] = int.MaxValue;
+        mas[4, 3] = 6;
+        mas[4, 4] = int.MaxValue;
+        mas[4, 5] = 9;
+
+        mas[5, 0] = 14;
+        mas[5, 1] = int.MaxValue;
+        mas[5, 2] = 2;
+        mas[5, 3] = int.MaxValue;
+        mas[5, 4] = 9;
+        mas[5, 5] = int.MaxValue;
+
+        return mas;
+    }
+
+
+    static void Main()
+    {
+        int n = 6;
+        int[,] mas = create_mas();
+
+        Console.WriteLine("Введите вершину, от которой ведётся поиск");
+
+        int a = Convert.ToInt32(Console.ReadLine()) - 1;
+
+        int[] visited = new int[n];
+
+        int[] S = new int[n];
+        for (int i = 0; i < n; i++)
+        {
+            S[i] = int.MaxValue;
+        }
+
+        S[a] = 0;
+
+        int N = 0;
+
+        int[]prev = new int[n];
+        int ind = 0;
+
+        Dijkstra(mas, ref S, ref visited, ref N, a, ref prev, ind);
+
+        if (N != n)
+        {
+            Console.WriteLine("Не все вершины связаны");
+        }
+        else
+        {
+            for (int i = 0; i < n; i++)
+            {
+                Console.WriteLine("Вершина {0}: {1}", i + 1, S[i]);
+                WritePrev(i, prev);
+                Console.WriteLine();
+            }
+        }
+    }
+    static void WritePrev(int i, int[]prev)
+    {
+        if (i == 0)
+        {
+            Console.Write(i+1+" ");
+            return;
+        }
+        WritePrev(prev[i], prev);
+        Console.Write(i + 1 + " ");
+    }
+
+    static void Dijkstra(int[,] mas, ref int[] S, ref int[] visited, ref int N, int a, ref int[]prev, int ind)
+    {
+        if (visited[a] == 1)
+        {
+            return;
+        }
+
+        visited[a] = 1;
+        N++;
+
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            int b = sum(mas[a, i], S[a]);
+            if (b < S[i])
+            {
+                S[i] = b;
+                prev[i] = a;
+            }
+        }
+
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            Dijkstra(mas, ref S, ref visited, ref N, i, ref prev, ind);
+        }
+    }
+    static int sum(int a, int b)
+    {
+        if ((a == int.MaxValue) || (b == int.MaxValue))
+            return int.MaxValue;
+        else
+            return a + b;
+    }
+}
