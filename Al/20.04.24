@@ -1,0 +1,171 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+class H
+{
+    static void Main()
+    {
+        StreamReader sr0 = new StreamReader("File1.txt");
+        StreamReader sr1 = new StreamReader("File2.txt");
+        string answ="";
+        string str1 = sr0.ReadLine();
+        string str2 = sr1.ReadLine();
+        int ind1 = 0;
+        int ind2 = 0;
+        bool a1 = true;
+        do
+        {
+            a1= Writeansw(ref answ, str1, str2, ref ind1, ref ind2);
+        }
+        while (a1);
+
+        //Console.WriteLine(answ);
+
+        StreamWriter sw = new StreamWriter("output.txt");
+        sw.WriteLine(answ);
+        sw.Close();
+
+
+        StreamReader sr2 = new StreamReader("input.txt");
+        int num = -1;
+        string siqence="";
+        int min = int.MaxValue;
+        for (int i = 0; ; i++)
+        {
+            string str = sr2.ReadLine();
+            if (str == null)
+            {
+                break;
+            }
+            int a = GetMinASequence(str);
+            if (min > a)
+            {
+                min = a;
+                num = i;
+                siqence = str;
+            }
+        }
+        if (num == -1)
+        {
+            Console.WriteLine("Последовательность не найдена");
+        }
+        else
+        {
+            Console.WriteLine(num + 1);
+            Console.WriteLine(siqence);
+        }
+        sr2.Close();
+    }
+    static bool Writeansw (ref string answ, string str1, string str2, ref int pos1, ref int pos2)
+    {
+        string s = answ;
+        int backpos1 = pos1;
+        int backpos2 = pos2;
+        int a = FindNumber(str1, ref pos1);
+        int b = FindNumber(str2, ref pos2);
+        if ((a<b)&&(str1.Length-1 > backpos1))
+        {
+            answ += a + " ";
+            pos2= backpos2;
+        }
+        else if (str2.Length > backpos2)
+        {
+            answ += b+" ";
+            if (a!=b)
+                pos1 = backpos1;
+        }
+
+        if ((str1.Length-1 == pos1)&&(str2.Length-1 == pos2))
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    static int FindNumber(string str, ref int pos)
+    {
+        if (str.Length-1 == pos)
+        {
+            int a = Convert.ToInt32(str.Substring(pos, 1));
+            return a;
+        }
+        else
+        {
+            string str1 = "";
+            for (; ; )
+            {
+                if (str.Length - 1 != pos)
+                    if (str[pos + 1] == ' ')
+                    {
+                        str1 += str.Substring(pos, 1);
+                        pos+=2;
+                        break;
+                    }
+                    else
+                    {
+                        str1 += str.Substring(pos, 1);
+                        pos++;
+                    }
+                else
+                {
+                    str1 += str.Substring(pos, 1);
+                    break;
+                }
+            }
+            return Convert.ToInt32(str1);
+        }
+    }
+    static int GetMinASequence(string str)
+    {
+        int lenght_min = int.MaxValue;
+        int lenght = 0;
+        int i = 0;
+        for (; ; )
+        {
+            int pos1 = str.IndexOf("a", i);
+            if (pos1 == -1)
+            {
+                break;
+            }
+            else
+            {
+                lenght = 1;
+            }
+
+            i = pos1 + 1;
+            for (; ; )
+            {
+                int pos2 = str.IndexOf("a", i);
+                if (pos2 == i)
+                {
+                    lenght++;
+                }
+                else
+                {
+                    if (lenght_min > lenght)
+                        lenght_min = lenght;
+                    lenght = 0;
+                    break;
+                }
+                i = pos2 + 1;
+            }
+        }
+        return lenght_min;
+    }
+
+
+}
