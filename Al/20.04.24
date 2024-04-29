@@ -101,6 +101,7 @@ class H
         if (str.Length-1 == pos)
         {
             int a = Convert.ToInt32(str.Substring(pos, 1));
+            pos++;
             return a;
         }
         else
