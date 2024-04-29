@@ -18,7 +18,7 @@ class H
     {
         StreamReader sr0 = new StreamReader("File1.txt");
         StreamReader sr1 = new StreamReader("File2.txt");
-        string answ="";
+        string answ = "";
         string str1 = sr0.ReadLine();
         string str2 = sr1.ReadLine();
         int ind1 = 0;
@@ -26,7 +26,7 @@ class H
         bool a1 = true;
         do
         {
-            a1= Writeansw(ref answ, str1, str2, ref ind1, ref ind2);
+            a1 = Writeansw(ref answ, str1, str2, ref ind1, ref ind2);
         }
         while (a1);
 
@@ -39,7 +39,7 @@ class H
 
         StreamReader sr2 = new StreamReader("input.txt");
         int num = -1;
-        string siqence="";
+        string siqence = "";
         int min = int.MaxValue;
         for (int i = 0; ; i++)
         {
@@ -67,26 +67,46 @@ class H
         }
         sr2.Close();
     }
-    static bool Writeansw (ref string answ, string str1, string str2, ref int pos1, ref int pos2)
+    static bool Writeansw(ref string answ, string str1, string str2, ref int pos1, ref int pos2)
     {
         string s = answ;
         int backpos1 = pos1;
         int backpos2 = pos2;
-        int a = FindNumber(str1, ref pos1);
-        int b = FindNumber(str2, ref pos2);
-        if ((a<b)&&(str1.Length-1 > backpos1))
+        int a = 0;
+        int b = 0;
+        if (pos1 > str1.Length)
+        {
+            a = int.MaxValue;
+        }
+        else
+        {
+            a = FindNumber(str1, ref pos1);
+        }
+        if (pos2 > str2.Length)
+        {
+            b = int.MaxValue;
+        }
+        else
+        {
+            b = FindNumber(str2, ref pos2);
+        }
+        if ((a < b) && (str1.Length > backpos1))
         {
             answ += a + " ";
-            pos2= backpos2;
+            if (str1.Length - 1 == backpos1)
+            {
+                pos1++;
+            }
+            pos2 = backpos2;
         }
         else if (str2.Length > backpos2)
         {
-            answ += b+" ";
-            if (a!=b)
+            answ += b + " ";
+            if (a != b)
                 pos1 = backpos1;
         }
 
-        if ((str1.Length-1 == pos1)&&(str2.Length-1 == pos2))
+        if ((str1.Length - 1 <= pos1) && (str2.Length - 1 <= pos2))
         {
             return false;
         }
@@ -98,7 +118,7 @@ class H
 
     static int FindNumber(string str, ref int pos)
     {
-        if (str.Length-1 == pos)
+        if (str.Length - 1 == pos)
         {
             int a = Convert.ToInt32(str.Substring(pos, 1));
             pos++;
@@ -113,7 +133,7 @@ class H
                     if (str[pos + 1] == ' ')
                     {
                         str1 += str.Substring(pos, 1);
-                        pos+=2;
+                        pos += 2;
                         break;
                     }
                     else
