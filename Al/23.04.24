@@ -1,0 +1,86 @@
+using System;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    //На вход файл, в котором содержатся целые числа. Определить кол во пар элементов,
+    //произведения которых нечетное, под парой понимается произвольно расположенные элементы,
+    //нельзя использовать список, массив и т.д.
+    static void Main()
+    {
+        StreamReader sr0 = new StreamReader("File1.txt");
+        string str = sr0.ReadLine();
+        int ind = 0;
+        int i = 0;
+        bool a1 = true;
+        do
+        {
+            a1 = FindNech(str, ref ind, ref i);
+        }
+        while (a1);
+        sr0.Close();
+        if (i!=0)
+            Console.WriteLine(Math.Pow(i, 2)-i);
+        else
+            Console.WriteLine("Пар нет");
+    }
+    static bool FindNech(string str, ref int ind, ref int i)
+    {
+        int a = FindNumber(str, ref ind);
+        if ((a%2)!=0)
+        {
+            i++;
+        }
+        if (ind==str.Length)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    static int FindNumber(string str, ref int pos)
+    {
+        if (str.Length-1  == pos)
+        {
+            int a = Convert.ToInt32(str.Substring(pos, 1));
+            pos++;
+            return a;
+        }
+        else
+        {
+            string str1 = "";
+            for (; ; )
+            {
+                if (str.Length - 1 != pos)
+                    if (str[pos + 1] == ' ')
+                    {
+                        str1 += str.Substring(pos, 1);
+                        pos += 2;
+                        break;
+                    }
+                    else
+                    {
+                        str1 += str.Substring(pos, 1);
+                        pos++;
+                    }
+                else
+                {
+                    str1 += str.Substring(pos, 1);
+                    break;
+                }
+            }
+            return Convert.ToInt32(str1);
+        }
+    }
+    //
+
+}
