@@ -20,39 +20,141 @@ class H
         Console.WriteLine("Введите точку с которой начнётся поиск");
         int a = Convert.ToInt32(Console.ReadLine());
         int b = Convert.ToInt32(Console.ReadLine());
-        int[,] points = CreatePoints(a,b);
+        int[,] points = CreatePoints(a, b);
 
-        for (int i = 0; i < points.GetUpperBound(0)+1; i++)
-        {
-            for (int j = 0; j<points.GetUpperBound(1)+1; j++)
-            {
-                if (points[i, j]==int.MaxValue)
-                {
-                    Console.Write(" " + " ");
-                }
-                else
-                Console.Write(points[i, j]+" ");
-            }
-            Console.WriteLine();
-        }
-    }
-    static int [,]CreatePoints(int a, int b)
-    {
         Console.WriteLine("Ввыдите финишную точку");
         int a1 = Convert.ToInt32(Console.ReadLine());
-        int b2 = Convert.ToInt32(Console.ReadLine());
+        int b1 = Convert.ToInt32(Console.ReadLine());
 
-        int[,] points = new int[8,12];
-        for (int i=0; i < points.GetUpperBound(0)+1; i++)
+        Console.WriteLine("Координаты пути:");
+
+        FindWay(points, a1, b1);
+        Console.WriteLine();
+        Console.WriteLine("Вывести планарный граф (1-да, 0-нет)");
+
+        int t = Convert.ToInt32(Console.ReadLine());
+        if(t==1)
         {
-            for (int j = 0; j < points.GetUpperBound(1)+1; j++)
+            Console.WriteLine();
+            for (int i = 0; i < points.GetUpperBound(0) + 1; i++)
+            {
+                for (int j = 0; j < points.GetUpperBound(1) + 1; j++)
+                {
+                    if (points[i, j] == int.MaxValue)
+                    {
+                        Console.Write(" " + " ");
+                    }
+                    else
+                        Console.Write(points[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+        }
+    }
+    static void FindWay(int[,] points, int i, int j)
+    {
+        if (points[i,j]==0)
+        {
+            Console.Write(i + "-" + j + " ");
+            return;
+        }
+        int q = SearchPoints(points, i, j);
+        if (q == 0 || q == 4 || q == 6 || q == 7 || q == 8)
+            if (points[i, j - 1] != int.MaxValue)
+            {
+                if (points[i, j - 1] == points[i, j] - 1)
+                {
+                    FindWay(points, i, j - 1);
+                    Console.Write(i+"-"+j+" ");
+                    return;
+                }
+            }
+
+        if (q == 0 || q == 3 || q == 5 || q == 7 || q == 8)
+            if (points[i, j + 1] != int.MaxValue)
+            {
+                if (points[i, j + 1] == points[i, j] - 1)
+                {
+                    FindWay(points, i, j + 1);
+                    Console.Write(i + "-" + j + " ");
+                    return;
+                }
+            }
+
+        if (q == 0 || q == 3 || q == 4 || q == 5 || q == 6 || q == 8)
+        {
+            if (q == 0 || q == 4 || q == 6 || q == 8)
+                if (points[i - 1, j - 1] != int.MaxValue)
+                {
+                    if (points[i-1, j - 1] == points[i, j] - 1)
+                    {
+                        FindWay(points, i-1, j - 1);
+                        Console.Write(i + "-" + j + " ");
+                        return;
+                    }
+                }
+
+            if (points[i - 1, j] != int.MaxValue)
+            {
+                if (points[i - 1, j ] == points[i, j] - 1)
+                {
+                    FindWay(points, i - 1, j);
+                    Console.Write(i + "-" + j + " ");
+                    return;
+                }
+            }
+
+            if (q == 0 || q == 3 || q == 5 || q == 8)
+                if (points[i - 1, j + 1] != int.MaxValue)
+                    if (points[i - 1, j+1] == points[i, j] - 1)
+                    {
+                        FindWay(points, i - 1, j+1);
+                        Console.Write(i + "-" + j + " ");
+                        return;
+                    }
+        }
+
+        if (q == 0 || q == 1 || q == 2 || q == 5 || q == 6 || q == 7)
+        {
+            if (q == 0 || q == 4 || q == 6 || q == 7)
+                if (points[i + 1, j - 1] != int.MaxValue)
+                    if (points[i + 1, j-1] == points[i, j] - 1)
+                    {
+                        FindWay(points, i + 1, j - 1);
+                        Console.Write(i + "-" + j + " ");
+                        return;
+                    }
+
+            if (points[i + 1, j] != int.MaxValue)
+                if (points[i + 1, j] == points[i, j] - 1)
+                {
+                    FindWay(points, i + 1, j);
+                    Console.Write(i + "-" + j + " ");
+                    return;
+                }
+            if (q == 0 || q == 3 || q == 5 || q == 7)
+                if (points[i + 1, j + 1] != int.MaxValue)
+                    if (points[i + 1, j+1] == points[i, j] - 1)
+                    {
+                        FindWay(points, i + 1, j+1);
+                        Console.Write(i + "-" + j + " ");
+                        return;
+                    }
+        }
+    }
+    static int[,] CreatePoints(int a, int b)
+    {
+        int[,] points = new int[8, 12];
+        for (int i = 0; i < points.GetUpperBound(0) + 1; i++)
+        {
+            for (int j = 0; j < points.GetUpperBound(1) + 1; j++)
             {
                 points[i, j] = -1;
             }
         }
 
         points[a, b] = 0;
-        points[0,2]= int.MaxValue;
+        points[0, 2] = int.MaxValue;
         points[1, 2] = int.MaxValue;
         points[4, 1] = int.MaxValue;
         points[4, 2] = int.MaxValue;
@@ -65,22 +167,22 @@ class H
         points[5, 10] = int.MaxValue;
         points[6, 10] = int.MaxValue;
 
-        for (int w=0; ;w++ )
+        for (int w = 0; ; w++)
         {
             for (int i = 0; i < points.GetUpperBound(0) + 1; i++)
             {
                 for (int j = 0; j < points.GetUpperBound(1) + 1; j++)
                 {
-                    if (points[i,j]==w)
+                    if (points[i, j] == w)
                         Print_point(ref points, i, j);
-                }         
+                }
             }
 
             if (analyss(points))
             {
                 break;
             }
-        }      
+        }
 
         return points;
     }
@@ -93,7 +195,7 @@ class H
                 if (points[i, j - 1] == -1 && points[i, j - 1] != int.MaxValue)
                     points[i, j - 1] = points[i, j] + 1;
 
-            if (q == 0 || q == 3 || q == 5|| q == 7 || q == 8)
+            if (q == 0 || q == 3 || q == 5 || q == 7 || q == 8)
                 if (points[i, j + 1] == -1 && points[i, j + 1] != int.MaxValue)
                     points[i, j + 1] = points[i, j] + 1;
 
@@ -126,37 +228,37 @@ class H
         }
     }
 
-    static bool analyss(int[,]points)
+    static bool analyss(int[,] points)
     {
-        for (int i = 0; i < points.GetUpperBound(0)+1; i++)
+        for (int i = 0; i < points.GetUpperBound(0) + 1; i++)
         {
-            for (int j=0; j<points.GetUpperBound(1)+1; j++)
+            for (int j = 0; j < points.GetUpperBound(1) + 1; j++)
             {
                 if (points[i, j] == -1)
                 {
                     return false;
                 }
             }
-        }    
+        }
         return true;
     }
     static int SearchPoints(int[,] points, int a, int b)
     {
-        if (a==0)
+        if (a == 0)
         {
-            if (b==0)
+            if (b == 0)
             {
                 return 1;
             }
 
-            if (b==points.GetUpperBound(1))
+            if (b == points.GetUpperBound(1))
             {
                 return 2;
             }
 
             return 7;
         }
-        else if (points.GetUpperBound(0)==a)
+        else if (points.GetUpperBound(0) == a)
         {
             if (b == 0)
             {
