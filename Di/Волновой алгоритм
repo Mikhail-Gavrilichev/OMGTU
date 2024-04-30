@@ -1,0 +1,177 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+class H
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите точку с которой начнётся поиск");
+        int a = Convert.ToInt32(Console.ReadLine());
+        int b = Convert.ToInt32(Console.ReadLine());
+        int[,] points = CreatePoints(a,b);
+
+        for (int i = 0; i < points.GetUpperBound(0)+1; i++)
+        {
+            for (int j = 0; j<points.GetUpperBound(1)+1; j++)
+            {
+                if (points[i, j]==int.MaxValue)
+                {
+                    Console.Write(" " + " ");
+                }
+                else
+                Console.Write(points[i, j]+" ");
+            }
+            Console.WriteLine();
+        }
+    }
+    static int [,]CreatePoints(int a, int b)
+    {
+        Console.WriteLine("Ввыдите финишную точку");
+        int a1 = Convert.ToInt32(Console.ReadLine());
+        int b2 = Convert.ToInt32(Console.ReadLine());
+
+        int[,] points = new int[8,12];
+        for (int i=0; i < points.GetUpperBound(0)+1; i++)
+        {
+            for (int j = 0; j < points.GetUpperBound(1)+1; j++)
+            {
+                points[i, j] = -1;
+            }
+        }
+
+        points[a, b] = 0;
+        points[0,2]= int.MaxValue;
+        points[1, 2] = int.MaxValue;
+        points[4, 1] = int.MaxValue;
+        points[4, 2] = int.MaxValue;
+        points[4, 3] = int.MaxValue;
+        points[4, 4] = int.MaxValue;
+        points[3, 8] = int.MaxValue;
+        points[3, 9] = int.MaxValue;
+        points[5, 9] = int.MaxValue;
+        points[6, 9] = int.MaxValue;
+        points[5, 10] = int.MaxValue;
+        points[6, 10] = int.MaxValue;
+
+        for (; ; )
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                for (int j = 0; j < 11; j++)
+                {
+                    if (points[i, j] != -1 && points[i, j] != int.MaxValue)
+                    {
+                        int q = SearchPoints(points, i, j);
+                        if (q == 0 || q == 4 || q == 6)
+                            if (points[i, j - 1] == -1 && points[i, j - 1] != int.MaxValue)
+                                points[i, j - 1] = points[i, j] + 1;
+
+                        if (q == 0 || q == 3 || q == 5)
+                            if (points[i, j + 1] == -1 && points[i, j + 1] != int.MaxValue)
+                                points[i, j + 1] = points[i, j] + 1;
+
+                        if (q == 0 || q == 3 || q == 4||q==5||q==6||q==8)
+                        {
+                            if (q==0||q==4||q==6)
+                                if (points[i - 1, j - 1] == -1 && points[i - 1, j - 1] != int.MaxValue)
+                                    points[i - 1, j - 1] = points[i, j] + 1;
+
+                            if (points[i - 1, j] == -1 && points[i - 1, j] != int.MaxValue)
+                                points[i - 1, j] = points[i, j] + 1;
+
+                            if (q == 0 || q == 3 || q == 5)
+                                if (points[i - 1, j + 1] == -1 && points[i - 1, j + 1] != int.MaxValue)
+                                    points[i - 1, j + 1] = points[i, j] + 1;
+                        }
+
+                        if (q == 0 || q == 1 || q == 2 || q == 5 || q == 6||q==7)
+                        {
+                            if (q == 0 || q == 4 || q == 6)
+                                if (points[i + 1, j - 1] == -1 && points[i + 1, j - 1] !=int.MaxValue)
+                                    points[i + 1, j - 1] = points[i, j] + 1;
+
+                            if (points[i + 1, j] == -1 && points[i + 1, j] != int.MaxValue)
+                                points[i + 1, j] = points[i, j] + 1;
+                            if (q == 0 || q == 3 || q == 5)
+                                if (points[i + 1, j + 1] == -1 && points[i + 1, j + 1] != int.MaxValue)
+                                    points[i + 1, j + 1] = points[i, j] + 1;
+                        }
+                    }
+                }         
+            }
+            if (analyss(points))
+            {
+                break;
+            }
+        }      
+
+        return points;
+    }
+    static bool analyss(int[,]points)
+    {
+        for (int i = 0; i < points.GetUpperBound(0); i++)
+        {
+            for (int j=0; j<points.GetUpperBound(1); j++)
+            {
+                if (points[i, j] == -1)
+                {
+                    return false;
+                }
+            }
+        }    
+        return true;
+    }
+    static int SearchPoints(int[,] points, int a, int b)
+    {
+        if (a==0)
+        {
+            if (b==0)
+            {
+                return 1;
+            }
+
+            if (b==points.GetUpperBound(1))
+            {
+                return 2;
+            }
+
+            return 7;
+        }
+        else if (points.GetUpperBound(0)==a)
+        {
+            if (b == 0)
+            {
+                return 3;
+            }
+
+            if (b == points.GetUpperBound(1))
+            {
+                return 4;
+            }
+
+            return 8;
+        }
+        else if (b == 0)
+        {
+            return 5;
+        }
+        else if (b == points.GetUpperBound(1))
+        {
+            return 6;
+        }
+
+        return 0;
+    }
+}
