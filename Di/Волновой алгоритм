@@ -69,19 +69,11 @@ class H
         {
             for (int i = 0; i < points.GetUpperBound(0) + 1; i++)
             {
-                if (i==6)
-                {
-                    int g = 1;
-                }
                 for (int j = 0; j < points.GetUpperBound(1) + 1; j++)
                 {
                     if (points[i,j]==w)
                         Print_point(ref points, i, j);
                 }         
-            }
-            if (w==5)
-            {
-                int g = 5;
             }
 
             if (analyss(points))
