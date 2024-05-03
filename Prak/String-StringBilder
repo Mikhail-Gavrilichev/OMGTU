@@ -1,0 +1,63 @@
+//1.1
+using System.Diagnostics;
+using System.Text.RegularExpressions;
+string t= "0000000000";
+
+Random rnd = new Random();
+
+Stopwatch time1 = new Stopwatch();
+Stopwatch time2 = new Stopwatch();
+
+string symbols = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*)(|\\`~/'][";
+time1.Start();
+for (int i=0; i<1000000; i++)
+{
+    int a = i%10; 
+    int value = rnd.Next(0, symbols.Length);
+    t=t.Remove(a, 1);
+    t=t.Insert(a, Convert.ToString(symbols[value]));
+}
+time1.Stop();
+
+Console.WriteLine(t);
+Console.WriteLine(time1.ElapsedMilliseconds+" мс");
+
+
+//1.2
+StringBuilder T= new StringBuilder(t);
+time2.Start();
+for (int i=0; i<1000000; i++)
+{
+    int a = i%10; 
+    int value = rnd.Next(0, symbols.Length);
+    T[a]=symbols[value];
+}
+time2.Stop();
+Console.WriteLine(T);
+Console.WriteLine(time2.ElapsedMilliseconds+" мс");
+
+//2
+string pattern1 = @"^((0?[0-9])|(1[0-9])|(2[0-3])):(([0-5][0-9])):(([0-5][0-9]))$";
+string str="23:21:46";
+if (Regex.IsMatch(str, pattern1))
+{
+    Console.WriteLine("Формат времени правильный");
+}
+else
+{
+    Console.WriteLine("Формат времени не правильный");
+}
+
+//3
+string st="Agadfhfg15@mail.ru";
+string pattern2 = @"([A-z0-9-_.]){2,63}@([A-z0-9-]{1,})(\.([A-z0-9-]){1,}){1,}";
+if (Regex.IsMatch(st, pattern2))
+{
+    Console.WriteLine("Правильный адресс электронной почты");
+}
+else 
+{
+    Console.WriteLine("Неправильный адресс электронной почты");
+}
+
+//сделать с помощью регулярных выражений 2 и 3
