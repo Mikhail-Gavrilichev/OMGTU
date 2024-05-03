@@ -1,0 +1,21 @@
+using System.Linq;
+class TrapezoidalRule 
+{
+    public static double Solve(Func<double, double> f, double a, double b, double dx) 
+    {
+        double e = 10E-7;
+        double S = b-a;
+        if (!double.IsNormal(a)) { throw new ArgumentException("a is not a number"); }
+        if (!double.IsNormal(b)) { throw new ArgumentException("b is not a number"); }
+        if (dx < e) { throw new ArgumentException("dx<e"); }
+        if (S<dx) {throw new ArgumentException("S<dx");}
+        int n = Convert.ToInt32(S/dx); // кол-во трапеций
+        double[] val = Enumerable.Range(0, n + 1).Select(i => a + dx * i).ToArray();
+        return val.Sum(x => Math.Abs(((f(x) + f(x + dx)) * dx) / 2));
+    }
+}
+
+Func<double, double> f = (double x) => -x*x + 9;
+
+var answ = TrapezoidalRule.Solve(f, -3, 3, 0.000001);
+answ
