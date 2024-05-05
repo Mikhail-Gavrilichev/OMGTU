@@ -1,0 +1,140 @@
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class task
+    {
+        public string taskName;
+        public student[] data;
+    }
+    public class student
+    {
+        public string name;
+        public string group;
+        public string discipline;
+        public int mark;
+    }
+
+
+    public class answ1
+    {
+        public Response1[] Response;
+    }
+    public class Response1
+    {
+        public string? Cadet;
+        public double GPA;
+    }
+
+
+
+    public class answ2
+    {
+        public string name;
+        public student[] students;
+    }
+
+
+
+    public class answ3
+    {
+        public string name;
+        public student[] students;
+    }
+
+
+
+
+
+    static void Main()
+    {
+        Task("input1.txt", "output1.txt");
+        Task("input2.txt", "output2.txt");
+        Task("input3.txt", "output3.txt");
+    } 
+    static void Task(string input_file, string output_file)
+    {
+        StreamReader sr0 = new StreamReader(input_file);
+        string json=sr0.ReadToEnd();
+        task m = JsonConvert.DeserializeObject<task>(json);
+        if (m.taskName== "GetStudentsWithHighestGPA")
+        {
+            Task1(m, output_file);
+        }
+        else if (m.taskName == "GetBestGroupsByDiscipline")
+        {
+            Task2(m, output_file);
+        }
+        else if (m.taskName == "CalculateGPAByDiscipline")
+        {
+            Task3(m, output_file);
+        }
+        else
+        {
+            Console.WriteLine("Неизвестное задание");
+        }
+        sr0.Close();
+    }
+
+    // Определить студента/студентов с максимальным средним баллом. 
+    static void Task1(task m, string output_file)
+    {
+        var group_by_student = from i in m.data
+                               group i by i.name;
+
+        List<Response1> students = new List<Response1>();
+        foreach (var group in group_by_student)
+        {
+            Response1 student = new Response1();
+            student.Cadet = group.Key;
+            student.GPA   = group.Sum(a => a.mark) / group.Count();
+            students.Add(student);
+        }
+
+        List<Response1> student_with_max_GPA = new List<Response1>();
+        double max = students.Max(a => a.GPA);
+        foreach (var student in students)
+        {
+            if (student.GPA == max)
+                student_with_max_GPA.Add(student);
+        }
+
+        answ1 answ = new answ1();
+        answ.Response = student_with_max_GPA.ToArray();
+
+        string json = JsonConvert.SerializeObject(answ);
+
+        StreamWriter sw = new StreamWriter(output_file);
+        sw.Write(json);
+        sw.Close();
+    }
+    static void Task2(task m, string output_file)
+    {
+
+    }
+    static void Task3(task m, string output_file)
+    {
+
+    }
+
+    static void Answ(string output_file, task m)
+    {
+        StreamWriter sr1 = new StreamWriter(output_file);
+        string json = JsonConvert.SerializeObject(m);
+        sr1.Write(json);
+        sr1.Close();
+    }
+}
+
+    
