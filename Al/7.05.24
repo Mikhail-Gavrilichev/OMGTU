@@ -1,0 +1,95 @@
+using System;
+using System.Linq;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+class H
+{
+    //Имеются данные по банковским счетам граждан, включающие поля: номер счёта, ФИО, доход, расходы, налог(5% на доход)
+    //Необходимо с помощью запросов определить:
+    //счета с отриц балансом
+    //счёт с наибольших доходом
+    //кол-во человек с положительным балансом
+    //общую сумму всех налогов
+    public class bank
+    {
+        public int number;
+        public string name;
+        public int income;
+        public int expenses;
+        public double tax;
+        public bank()
+        {
+            Console.WriteLine("Введите номер счёта, ФИО, доход, расходы");
+            this.number = Convert.ToInt32(Console.ReadLine());
+            this.name = Console.ReadLine();
+            this.income = Convert.ToInt32(Console.ReadLine());
+            this.expenses = Convert.ToInt32(Console.ReadLine());
+            this.tax = Convert.ToDouble(income)/100*5;
+        }
+    }
+    static void Main()
+    {
+        List<bank> banks = new List<bank>();
+
+        banks.Add(new bank());
+        banks.Add(new bank());
+        banks.Add(new bank());
+
+        Console.WriteLine("Счета с отриц балансом");
+
+        var str1 = banks.Where(p => (p.income-p.expenses-p.tax)<0);
+
+        foreach (var list in str1)
+        {
+            Console.WriteLine(list.name);
+            Console.WriteLine(list.number);
+            Console.WriteLine(list.income - list.expenses - list.tax);
+        }
+
+        Console.WriteLine("Счета с наибольших доходом");
+        int max = banks.Max(a => a.income);
+
+        var str2 = banks.Where(p => (p.income==max));
+
+        foreach (var list in str2)
+        {
+            Console.WriteLine(list.name);
+            Console.WriteLine(list.number);
+            Console.WriteLine(list.income);
+        }
+
+        Console.WriteLine("Кол-во человек с положительным балансом");
+
+        var str3 = banks.Where(p => ((p.income - p.expenses - p.tax)>0));
+
+        int b = 0;
+        foreach (var a in str3)
+        {
+            b++;
+        }
+        Console.WriteLine(b);
+
+        Console.WriteLine("Общая сумма всех налогов");
+
+        double alltax =0;
+        foreach (var a in banks)
+        {
+            alltax += a.tax;
+        }
+        Console.WriteLine(alltax);
+    }
+}
