@@ -1,0 +1,40 @@
+using System;
+using System.Linq;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+class H
+{
+    //LINQ на вход список состоящий из строк
+    //необходимо сформировать запрос на выборку элементов с четной длиной
+    //применить запрос к сформированному списку
+    //удалить каждый второй элемент списка(не применяя запрос)
+    //применить запрос ещё раз к измененному списку.
+    //Запрос = LINQ
+    static void Main()
+    {
+        List<string> str = new List<string>() {"sdfgad", "qe", " 43 ", "45fws", "1", "jdkfjgkadd" };
+        var str1 = str.Where(p=>p.Length%2==0);
+        List<string> e = new List<string>(str.Count());
+
+        for (int i=0; i<str.Count(); i++)
+        {
+            if (i%2!=0||i==0)
+            {
+                e.Add(str[i]);
+            }
+        }
+        var str2 = e.Where(p => p.Length % 2 == 0);
+    }
+}
