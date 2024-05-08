@@ -1,0 +1,166 @@
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class gear
+    {
+        public int number;             // номер
+        public double quantity_teeth;  // кол-во зубьев
+        public int [] Conecnt_gear;    // соединённые шест
+        public int direction;          // направление
+        public int ind = 0;            // кол-во соед. шестерёнок
+        public int visited = 0;        // посещённость
+    }
+    static void Main()
+    {
+        // 1 строка
+        StreamReader sr0 = new StreamReader("Input.txt");
+        StreamWriter sr1 = new StreamWriter("Output.txt");
+        string str = sr0.ReadLine();
+        string[] e = str.Split(" ");
+        int N = Convert.ToInt32(e[0]);
+        int M = Convert.ToInt32(e[1]);
+        if ((N<2||N>100)||(M<N-1||M>(N-1)*N/2))
+        {
+            Console.WriteLine("Ошибка ввода");
+            return;
+        }
+
+        gear[] mas = new gear[N] ; //!!!
+        
+        // 2 строка
+        for (int i=0; i<N; i++)
+        {
+            mas[i] = new gear();
+            mas[i].Conecnt_gear = new int[N];
+            string str1 = sr0.ReadLine();
+            string[] e1 = str1.Split(" ");
+            if ((Convert.ToInt32(e1[0])<1|| Convert.ToInt32(e1[0])>N )||( Convert.ToInt32(e1[1])<10 || Convert.ToInt32(e1[1])>1000))
+            {
+                Console.WriteLine("Ошибка ввода");
+                return;
+            }
+            mas[i].number = Convert.ToInt32(e1[0]);
+            mas[i].quantity_teeth = Convert.ToDouble(e1[1]);
+        }
+
+        // 3 строка
+        for (int i = 0; i < M; i++)
+        {
+            string str1 = sr0.ReadLine();
+            string[] e1 = str1.Split(" ");
+            int a = Convert.ToInt32(e1[0]);
+            int b = Convert.ToInt32(e1[1]);
+            if (a>=1|| a <= N|| b >= 1 || b <= N)
+            {
+                for (int j=0; j<N; j++)
+                {
+                    if (mas[j].number==a)
+                    {
+                        mas[j].Conecnt_gear[mas[j].ind] = b;
+                        mas[j].ind++;
+                    }
+                    if (mas[j].number == b)
+                    {
+                        mas[j].Conecnt_gear[mas[j].ind] = a;
+                        mas[j].ind++;
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("Ошибка ввода");
+                return;
+            }
+        }
+
+        int begin = 0;
+        int end = 0;
+
+        string str11 = sr0.ReadLine();
+        string str22 = sr0.ReadLine();
+
+        // 4 строка(начальная и конечная шестеренка) 5 строка(направление начальной)
+        string[] e11 = str11.Split(" ");
+        string[] e22 = str22.Split(" ");
+        int a1 = Convert.ToInt32(e11[0]);
+        int b1 = Convert.ToInt32(e11[1]);
+        if (a1< 1 || a1> N || b1< 1 || b1> N)
+        {
+            Console.WriteLine("Ошибка ввода");
+            return;
+        }
+
+        for (int j = 0; j < N; j++)
+        {
+            if (mas[j].number == a1)
+            {
+                mas[j].direction = Convert.ToInt32(e22[0]);
+                begin = j;
+            }
+            if (mas[j].number == b1)
+            {
+                end = j;
+            }
+        }
+
+        // у нас есть массив шестерёнок
+        if (Analys(mas[begin], ref mas))
+        {
+            sr1.WriteLine(1);
+            sr1.WriteLine(mas[end].direction);
+            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-US");
+            sr1.WriteLine("{0:N3}", mas[begin].quantity_teeth / mas[end].quantity_teeth);
+        }
+        else
+        {
+            sr1.WriteLine(-1);
+        }
+
+        sr0.Close();
+        sr1.Close();
+
+    }
+
+ 
+    static bool Analys(gear A, ref gear[] mas)
+    {
+        for (int i=0; i<A.ind; i++)
+        {
+            for (int j=0; j<mas.Length; j++)
+            {
+                if (A.Conecnt_gear[i] == mas[j].number)
+                {
+                    if (mas[j].direction==0)
+                    {
+                        mas[j].direction = -A.direction;
+                    }
+                    else if (mas[j].direction!=-A.direction)
+                    {
+                        return false;
+                    }
+                    if (mas[j].visited != 1)
+                    {
+                        mas[j].visited = 1;
+                        if (Analys(mas[j], ref mas)==false)
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+
+    }
+}
