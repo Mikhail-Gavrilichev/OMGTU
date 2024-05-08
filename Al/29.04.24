@@ -21,20 +21,29 @@ class H
     //применить запрос к сформированному списку
     //удалить каждый второй элемент списка(не применяя запрос)
     //применить запрос ещё раз к измененному списку.
-    //Запрос = LINQ
     static void Main()
     {
-        List<string> str = new List<string>() {"sdfgad", "qe", " 43 ", "45fws", "1", "jdkfjgkadd" };
-        var str1 = str.Where(p=>p.Length%2==0);
-        List<string> e = new List<string>(str.Count());
-
-        for (int i=0; i<str.Count(); i++)
+        List<string> str = new List<string>() { "sdfgad", "qe", " 43 ", "45fws", "1", "jdkfjgkadd" };
+        var str1 = str.Where(p => p.Length % 2 == 0);
+        foreach(var t in str1)
         {
-            if (i%2!=0||i==0)
+            Console.WriteLine(t);
+        }
+
+        Console.WriteLine();
+
+        List<string> e = new List<string>(str.Count());
+        for (int i = 0; i < str.Count(); i++)
+        {
+            if (i % 2 != 0 || i == 0)
             {
                 e.Add(str[i]);
             }
         }
         var str2 = e.Where(p => p.Length % 2 == 0);
+        foreach (var t in str2)
+        {
+            Console.WriteLine(t);
+        }
     }
 }
