@@ -1,0 +1,92 @@
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    static void Main()
+    {
+        string []mas = File.ReadAllLines("Input.txt");
+        int n =Convert.ToInt32(mas[0]);
+        int A = 1;
+        int B = 0;
+        for (int i=1; i<n+1; i++)
+        {
+            string []str = mas[i].Split(" ");
+            if(str[0]=="+")
+            {
+                int x;
+                if (int.TryParse(str[1], out x))
+                {
+                    B += x;
+                }
+                else if(str[1] == "x")
+                {
+                    A += 1;
+                }
+                else
+                {
+                    StreamWriter sr0 = new StreamWriter("Output.txt");
+                    sr0.WriteLine("Err");
+                    sr0.Close();
+                    return;
+                }
+            }
+            else if (str[0] == "-")
+            {
+                int x;
+                if (int.TryParse(str[1], out x))
+                {
+                    B -= x;
+                }
+                else if(str[1]=="x")
+                {
+                    A -= 1;
+                }
+                else
+                {
+                    StreamWriter sr0 = new StreamWriter("Output.txt");
+                    sr0.WriteLine("Err");
+                    sr0.Close();
+                    return;
+                }
+            }
+            else if (str[0] == "*")
+            {
+                int x;
+                if (int.TryParse(str[1], out x))
+                {
+                    B *= x;
+                    A *= x;
+                }
+            }
+            else
+            {
+                StreamWriter sr0 = new StreamWriter("Output.txt");
+                sr0.WriteLine("Err");
+                sr0.Close();
+                return;
+            }
+        }
+        int R = Convert.ToInt32(mas[n+1]);
+        if (A==0)
+        {
+            StreamWriter sr0 = new StreamWriter("Output.txt");
+            sr0.WriteLine("Err");
+            sr0.Close();
+            return;
+        }
+        double answ = (Convert.ToDouble(R - B)) / Convert.ToDouble(A);
+        StreamWriter sr1 = new StreamWriter("Output.txt");
+        sr1.WriteLine(answ);
+        sr1.Close();
+    }
+}
