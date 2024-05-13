@@ -1,0 +1,95 @@
+using System;
+using System.Linq;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+class H
+{
+    //Имеются данные по банковским счетам граждан, включающие поля: номер счёта, ФИО, доход, расходы, налог(5% на доход)
+    //Необходимо с помощью запросов определить:
+    //счета с отриц балансом
+    //счёт с наибольших доходом
+    //кол-во человек с положительным балансом
+    //общую сумму всех налогов
+    public class info
+    {
+        public int number;
+        public string name;
+        public string name_cat;
+        public int value;
+        public int cost_for1;
+        public string storage;
+        public info()
+        {
+            Console.WriteLine("Номер товара, наименование, название категории, кол-во товара, цена за 1 товар, склад размещения");
+            this.number = Convert.ToInt32(Console.ReadLine());
+            this.name = Console.ReadLine();
+            this.name_cat = Console.ReadLine();
+            this.value = Convert.ToInt32(Console.ReadLine());
+            this.cost_for1 = Convert.ToInt32(Console.ReadLine());
+            this.storage = Console.ReadLine();
+        }
+    }
+    static void Main()
+    {
+        List<info> infos = new List<info>();
+
+        infos.Add(new info());
+        infos.Add(new info());
+        infos.Add(new info());
+
+        Console.WriteLine("Обьём товара по складам");
+        var group_by_storage = from i in infos
+                            group i by i.storage;
+
+        foreach (var group in group_by_storage)
+        {
+            Console.WriteLine(group.Key);
+            Console.WriteLine(group.Sum(x => x.value));
+        }
+
+        Console.WriteLine("Макс цена по категориям");
+        var group_by_name_cat = from i in infos
+                               group i by i.name_cat;
+        foreach (var group in group_by_name_cat)
+        {
+            Console.WriteLine(group.Key);
+            Console.WriteLine(group.Max(a => a.cost_for1));
+        }
+
+        Console.WriteLine("Средняя цена товаров без категории");
+        foreach (var gr in group_by_name_cat)
+        {
+            if (gr.Key == "-")
+            {
+                Console.WriteLine(gr.Sum(x => x.cost_for1) / gr.Count());
+            }
+        }
+
+        Console.WriteLine("Самый дешёвый товар с каждого склада");
+        foreach (var group in group_by_storage)
+        {
+            Console.WriteLine(group.Min(a => a.cost_for1));
+        }
+
+        Console.WriteLine("Общая стоимость товара с каждого склада");
+        foreach (var group in group_by_storage)
+        {
+            Console.WriteLine(group.Sum(a => a.cost_for1* a.value));
+        }
+    }
+}
+
