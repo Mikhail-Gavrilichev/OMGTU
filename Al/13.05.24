@@ -53,17 +53,22 @@ class H
 
         Console.WriteLine("Обьём товара по складам");
         var group_by_storage = from i in infos
-                            group i by i.storage;
-
+                               group i by i.storage;
         foreach (var group in group_by_storage)
         {
+            var group_by_storage_by_name = from i in @group
+                                           group i by i.name;
             Console.WriteLine(group.Key);
-            Console.WriteLine(group.Sum(x => x.value));
+            foreach (var gr in group_by_storage_by_name)
+            {
+                Console.WriteLine(gr.Key);
+                Console.WriteLine(gr.Sum(x => x.value));
+            }
         }
 
         Console.WriteLine("Макс цена по категориям");
         var group_by_name_cat = from i in infos
-                               group i by i.name_cat;
+                                group i by i.name_cat;
         foreach (var group in group_by_name_cat)
         {
             Console.WriteLine(group.Key);
@@ -82,13 +87,16 @@ class H
         Console.WriteLine("Самый дешёвый товар с каждого склада");
         foreach (var group in group_by_storage)
         {
+            Console.WriteLine(group.Key);
+            Console.WriteLine(group.Min(a => a.name));
             Console.WriteLine(group.Min(a => a.cost_for1));
         }
 
         Console.WriteLine("Общая стоимость товара с каждого склада");
         foreach (var group in group_by_storage)
         {
-            Console.WriteLine(group.Sum(a => a.cost_for1* a.value));
+            Console.WriteLine(group.Key);
+            Console.WriteLine(group.Sum(a => a.cost_for1 * a.value));
         }
     }
 }
