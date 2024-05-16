@@ -1,0 +1,99 @@
+using System.Linq;
+
+class Program
+{
+    
+    // Кодирование слова или фразы
+    static void coder<T>(ref T[] mas)
+    {
+        var answer = new List<T>();
+
+        for(int i = 0; i < mas.Length; i++)
+        {
+            if(i % 2 == 0)
+            {
+                answer.Add(mas[i]);
+            }
+            else
+            {
+                answer.Insert(0, mas[i]);
+            }
+        }
+        mas = answer.ToArray();
+    }
+    // Декодирование слова или фразы
+    static void decoder<T>(ref T[] mas)
+    {
+        var answer = new List<T>();
+        int L = mas.Length;
+        int add = L%2 == 0? 1: 0;
+        for (int i = 0; i < L; i++)
+        {
+            if ((i + add) % 2 == 0)
+            {
+                answer.Insert(0, mas[L - 1 - i / 2]);
+            }
+            else
+            {
+                answer.Insert(0, mas[i / 2]);
+            }
+        }
+        mas = answer.ToArray();
+    }
+
+    // Перевод на язык Тау-Кита
+    static string Tya_Kita(string s)
+    {
+        // Разбиваем на слова
+        string[] words = s.Split(' ');
+
+        // Кодируем каждое слово
+        for (int i = 0; i < words.Length; i++)
+        {
+            char[] charArray = words[i].Select(c => c).ToArray();
+            coder(ref charArray);
+            words[i] = String.Join("", charArray);
+        }
+        // Кодируем предложение
+        coder(ref words);
+
+        return String.Join(" ", words);
+    }
+
+    // Перевод с языкы Тау-Кита на английский
+    static string deTya_Kita(string s)
+    {
+        // Разбиваем на слова
+        string[] words = s.Split(' ');
+
+        // Декодируем каждое слово
+        for (int i = 0; i < words.Length; i++)
+        {
+            char[] charArray = words[i].Select(c => c).ToArray();
+            decoder(ref charArray);
+            words[i] = String.Join("", charArray);
+        }
+        // Кодируем предложение
+        decoder(ref words);
+
+        return String.Join(" ", words);
+    }
+
+
+    static void Main(string[] args)
+    {
+        // Читаем файл
+        StreamReader input_file = new StreamReader("input.txt");
+        string s = input_file.ReadLine();
+        input_file.Close();
+
+        // Кодируем или декодируем
+        //string str = Tya_Kita(s);
+        string str = deTya_Kita(s);
+
+        // Записываем в файл
+        StreamWriter output_file = new StreamWriter("output.txt");
+        output_file.WriteLine(str);
+        output_file.Close();
+    }
+}
