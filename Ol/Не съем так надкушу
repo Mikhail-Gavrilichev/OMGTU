@@ -1,0 +1,121 @@
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+
+class Program
+{
+    static void ReadTwoDigit(out int a, out int b, StreamReader file)
+    {
+        string s = file.ReadLine();
+        string[] str = s.Split(' ');
+        a = int.Parse(str[0]);
+        b = int.Parse(str[1]);
+    }
+
+
+    struct stBranch
+    {
+        public int number;      // Номер ветки
+        public int K;           // Начальная вершина для текушей ветки
+        public int L;           // Длина ветки
+        public bool Apple;      // есть ли яблоко на конце ветки
+        public int S;           // Спелость яблока на ветке
+        public bool processed;  // Ветка обработана
+    }
+    // Разбор параметров из входного файла
+    static void ParseInputFile(string file_name, out int N, out int M, out int X, out int Z, out stBranch[] branch)
+    {
+        // Читаем файл
+        StreamReader input_file = new StreamReader("input.txt");
+        // Выделяем количество веток и количество яблок
+        ReadTwoDigit(out N, out M, input_file);
+        // Выделяем ветки
+        branch = new stBranch[N];
+        for (int i = 0; i < N; i++)
+        {
+            branch[i].number = i + 1;
+            branch[i].processed = false;
+            ReadTwoDigit(out branch[i].K, out branch[i].L, input_file);
+            branch[i].Apple = false;
+        }
+        //Выделяем яблоки
+        for (int i = 0; i < M; i++)
+        {
+            int c, s;
+            ReadTwoDigit(out c, out s, input_file);
+            branch[c - 1].S = s;
+            branch[c - 1].Apple = true;
+        }
+        // Читаем номер ветки с червяком и желаемую спелость яблок
+        ReadTwoDigit(out X, out Z, input_file);
+        input_file.Close();
+    }
+
+    static void PrintAnswer(int path)
+    {
+        // Записываем в файл
+        StreamWriter output_file = new StreamWriter("output.txt");
+        output_file.WriteLine(path);
+        output_file.Close();
+        Console.WriteLine(path);
+    }
+
+    static bool GetAppleNumber(int branch_index, stBranch[] branch_array, ref int path, ref int longest_path, int Z, int path_to_vertex)
+    {
+        bool apple_finded = false;
+        var branch_from_vertex = from p in branch_array
+                                where p.K == branch_index
+                                select p;
+
+        // Перебор исходящих веток из текущей ветки
+        foreach (var i in branch_from_vertex)
+        {
+            if (i.processed == false)
+            {
+                branch_array[i.number - 1].processed = true;
+                if ((i.Apple) && (i.S >= Z))
+                {
+                    path += 2 * i.L;
+                    if (longest_path < path_to_vertex + i.L)
+                        longest_path = path_to_vertex + i.L;
+                    apple_finded = true;
+                }
+                else
+                {
+                    if(GetAppleNumber(i.number, branch_array, ref path, ref longest_path, Z, path_to_vertex + i.L))
+                        path += 2 * i.L;
+                }
+            }
+        }
+        // Обработка ветки, из которой растет текущая ветка
+        if (branch_index > 0)   // ниже нулевой точки (начала дерева) - не ходим
+        {
+            if (branch_array[branch_index - 1].processed == false)
+            {
+                branch_array[branch_index - 1].processed = true;
+                path += 2 * branch_array[branch_index - 1].L;
+                GetAppleNumber(branch_array[branch_index - 1].K, branch_array, ref path, ref longest_path, Z, path_to_vertex + branch_array[branch_index - 1].L);
+            }
+        }
+        return apple_finded;
+    }
+    static void Main(string[] args)
+    {
+        int N,  // Количество веток
+            M,  // Количество яблок
+            X,  // Номер ветки, на конце которой сидит червяк
+            Z;  // Желаемая спелость яблок
+        stBranch[] branch;
+        int path = 0;
+        int longest_path = 0;
+
+        ParseInputFile("input.txt", out N, out M, out X, out Z, out branch);
+
+
+        GetAppleNumber(X, branch, ref path, ref longest_path, Z, 0);
+
+        path = path - longest_path;
+        PrintAnswer(path);
+    }
+}
