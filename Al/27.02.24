@@ -1,0 +1,136 @@
+using System;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    static void Main()
+    {
+        Console.WriteLine("Введите количество звонков");
+        int N = Convert.ToInt32(Console.ReadLine());
+
+        Queue<string> queue1 = new Queue<string>();
+        Queue<string> queue2 = new Queue<string>();
+
+        for (int i = 0; i < N; i++)
+        {
+            Console.WriteLine("Введите данные: номер телефона, дата разговора, время начала раговора, кол-во минут");
+            string a = Console.ReadLine();
+            queue1.Enqueue(a);
+            queue2.Enqueue(a);
+        }
+
+        Dictionary<string, int> d1 = new Dictionary<string, int>();
+        Hashtable h1 = new Hashtable();
+
+        string[] st;    // временный массив
+        string number;  // номер
+        string date;    // дата
+        string begin;   // начало разговора
+        string talk;    // время
+
+        while (queue1.Count != 0)
+        {
+            st = queue1.Dequeue().Split(' ');
+            number = st[0];
+            date = st[1];
+            begin = st[2];
+            talk = st[3];
+
+            if (d1.ContainsKey(number)) 
+            { 
+                d1[number] += Convert.ToInt32(talk); 
+            }
+            else 
+            { 
+                d1.Add(number, Convert.ToInt32(talk)); 
+            }
+
+            if (h1.ContainsKey(number)) 
+            { 
+                h1[number] = Convert.ToInt32(h1[number]) + Convert.ToInt32(talk); 
+            }
+            else 
+            { 
+                h1.Add(number, Convert.ToInt32(talk)); 
+            }
+        }
+
+        Console.WriteLine("Задача 1");
+        Console.WriteLine("Хеш таблица");
+
+        foreach (DictionaryEntry t in h1)
+        {
+            Console.WriteLine("{0}: {1} минут", t.Key, t.Value);
+        }
+
+        Console.WriteLine("Словарь");
+        foreach (var t in d1)
+        {
+            Console.WriteLine("{0}: {1} минут", t.Key, t.Value);
+        }
+
+
+        Dictionary<string, int> d2 = new Dictionary<string, int>();
+        Hashtable h2 = new Hashtable();
+        Console.WriteLine("Введите дату");
+        string need_date = Console.ReadLine();
+        while (queue2.Count != 0)
+        {
+            st = queue2.Dequeue().Split(' ');
+            number = st[0];
+            date = st[1];
+            begin = st[2];
+            talk = st[3];
+
+            if (date == need_date)
+            {
+                if (d2.ContainsKey(number)) 
+                { 
+                    d2[number] += Convert.ToInt32(talk); 
+                }
+                else 
+                { 
+                    d2.Add(number, Convert.ToInt32(talk)); 
+                }
+
+                if (h2.ContainsKey(number)) 
+                { 
+                    h2[number] = Convert.ToInt32(h2[number]) + Convert.ToInt32(talk); 
+                }
+                else 
+                { 
+                    h2.Add(number, Convert.ToInt32(talk)); 
+                }
+            }
+        }
+
+        Console.WriteLine("Задача 2");
+        Console.WriteLine("Хеш таблица:");
+        int sum = 0;
+        foreach (DictionaryEntry t in h2)
+        {
+            sum += Convert.ToInt32(t.Value);
+        }
+        Console.WriteLine("Время разговоров: {0} минут", sum);
+
+        Console.WriteLine("Словарь:");
+        sum = 0;
+        foreach (var t in d2)
+        {
+            sum += Convert.ToInt32(t.Value);
+        }
+        Console.WriteLine("Время разговоров: {0} минут", sum);
+    }
+}
