@@ -1,0 +1,118 @@
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+
+class Program
+{
+    static void ReadTwoDigit(out int a, out int b, StreamReader file)
+    {
+        string[] str = file.ReadLine().Split(' ');
+        a = int.Parse(str[0]);
+        b = int.Parse(str[1]);
+    }
+
+    static void ReadThreeDigit(out int a, out int b, out int c, StreamReader file)
+    {
+        string[] str = file.ReadLine().Split(' ');
+        a = int.Parse(str[0]);
+        b = int.Parse(str[1]);
+        c = int.Parse(str[2]);
+    }
+    static void ReadRotationData(out char axis, out int k, out int s, StreamReader file)
+    {
+        string[] str = file.ReadLine().Split(' ');
+        axis = str[0][0];
+        k = int.Parse(str[1]);
+        s = int.Parse(str[2]);
+    }
+
+    struct stRotate
+    {
+        public char axis;       // Ось вращения
+        public int K;           // Номер блока по оси, который подвергается вращению
+        public int S;           // Направление вращения (1 - по часовой стрелке, -1 - против часовой стрелки)
+    }
+    // Разбор параметров из входного файла
+    static void ParseInputFile(string file_name, out int N, out int M, out int X, out int Z, out int Y, out stRotate[] rotation_array)
+    {
+        // Читаем файл
+        StreamReader input_file = new StreamReader("input.txt");
+        // Выделяем количество элементов вдоль ребра (N) и количество вращений (M)
+        ReadTwoDigit(out N, out M, input_file);
+        // Выделяем начальные координаты
+        ReadThreeDigit(out X, out Y, out Z, input_file);
+        // Выделяем данные вращения
+        rotation_array = new stRotate[N];
+        for (int i = 0; i < N; i++)
+        {
+            ReadRotationData(out rotation_array[i].axis, out rotation_array[i].K, out rotation_array[i].S, input_file);
+        }
+          input_file.Close();
+    }
+
+    static void PrintAnswer(int X, int Y, int Z)
+    {
+        // Записываем в файл
+        string answer = X + " " + Y + " " + Z;
+        StreamWriter output_file = new StreamWriter("output.txt");
+        output_file.WriteLine(answer);
+        output_file.Close();
+        Console.WriteLine(answer);
+    }
+
+    // Вращение грани
+    static void Rotate(int K, int rotation_axis_coordinate, ref int top_axis_coordinate, ref int left_axis_coordinate, int S, int N)
+    {
+        // Вращаем, если отслеживаемый элемент находится на нужной грани
+        if (K == rotation_axis_coordinate)
+        {
+            int new_top;
+            int new_left;
+            if(S == 1)
+            {
+                // Поворот по часовой стрелке
+                new_top = N - left_axis_coordinate + 1;
+                new_left = top_axis_coordinate;
+            }
+            else
+            {
+                // Поворот против часовой стрелки
+                new_top = left_axis_coordinate;
+                new_left = N - top_axis_coordinate + 1;
+            }
+            top_axis_coordinate = new_top; 
+            left_axis_coordinate = new_left;
+        }
+    }
+    static void Main(string[] args)
+    {
+        int N;  // Количество элементов (кубиков) вдоль ребра
+        int M;  // Количество вращений
+        int X;  // Координаты отслеживаемого элемента
+        int Y;  // 
+        int Z;  // 
+        stRotate[] rotation_array;
+
+
+        ParseInputFile("input.txt", out N, out M, out X, out Z, out Y, out rotation_array);
+
+        for(int i = 0; i < M; i++)
+        {
+            switch(rotation_array[i].axis)
+            {
+                case 'X':
+                    Rotate(rotation_array[i].K, X, ref Z, ref Y, rotation_array[i].S, N);
+                    break;
+                case 'Y':
+                    Rotate(rotation_array[i].K, Y, ref X, ref Z, - rotation_array[i].S, N);
+                    break;
+                case 'Z':
+                    Rotate(rotation_array[i].K, Z, ref Y, ref X, rotation_array[i].S, N);
+                    break;
+            }
+        }
+
+        PrintAnswer(X, Y, Z);
+    }
+}
