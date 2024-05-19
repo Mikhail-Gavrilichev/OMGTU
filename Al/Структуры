@@ -1,0 +1,86 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+using System.Threading.Tasks.Dataflow;
+
+class H
+{
+    public struct info
+    {
+        public string FIO;
+        public string number;
+        public string city;
+    }
+    static void Main()
+    {
+        StreamWriter sw1 = new StreamWriter("File1.txt");
+        StreamWriter sw2 = new StreamWriter("File2.txt");
+        StreamWriter sw3 = new StreamWriter("File3.txt");
+        string[] mas = File.ReadAllLines("input.txt");
+        info[] str=new info[mas.Length];
+        for (int i = 0; i < mas.Length; i++)
+        {
+            string[] q= mas[i].Split(' ');
+            str[i].FIO = q[0]+" "+q[1] + " " + q[2];
+            str[i].number = q[3];
+            str[i].city = q[4];
+        }
+
+        var group_by_city = from i in str
+                            group i by i.city;
+
+        foreach (var i in group_by_city)
+        {
+            sw1.WriteLine(i.Key);
+            foreach (var q in i)
+            {
+                sw1.WriteLine(q.FIO + " " + q.number + " " + q.city);
+            }
+        }
+
+        var group_by_FIO0 = from i in str
+                            group i by i.FIO[0];
+
+        foreach (var i in group_by_FIO0)
+        {
+            sw2.WriteLine(i.Key);
+            foreach (var q in i)
+            {
+                sw2.WriteLine(q.FIO + " " + q.number+" "+q.city);
+            }
+        }
+
+        foreach (var i in group_by_city)
+        {
+            var group_by_city_by_FIO = from j in i
+                                       group j by j.FIO;
+            sw3.WriteLine(i.Key);
+            foreach (var q in group_by_city_by_FIO)
+            {
+                sw3.WriteLine(q.Key);
+                foreach (var t in q)
+                {
+                    sw3.WriteLine(t.FIO + " " + t.number + " " + t.city);
+                }
+            }
+        }
+
+        sw1.Close();
+        sw2.Close();
+        sw3.Close();
+    }
+}
