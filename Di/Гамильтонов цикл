@@ -1,0 +1,159 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    class edge
+    {
+        public int point1;
+        public int point2;
+    }
+    static int[,] create_mas()
+    {
+        int[,] mas = new int[5, 5];
+
+        mas[0, 0] = 0;
+        mas[0, 1] = 1;
+        mas[0, 2] = 1;
+        mas[0, 3] = 1;
+        mas[0, 4] = 0;
+
+        mas[1, 0] = 1;
+        mas[1, 1] = 0;
+        mas[1, 2] = 1;
+        mas[1, 3] = 0;
+        mas[1, 4] = 1;
+
+        mas[2, 0] = 1;
+        mas[2, 1] = 1;
+        mas[2, 2] = 0;
+        mas[2, 3] = 1;
+        mas[2, 4] = 1;
+
+        mas[3, 0] = 1;
+        mas[3, 1] = 0;
+        mas[3, 2] = 1;
+        mas[3, 3] = 0;
+        mas[3, 4] = 1;
+
+        mas[4, 0] = 0;
+        mas[4, 1] = 1;
+        mas[4, 2] = 1;
+        mas[4, 3] = 1;
+        mas[4, 4] = 0;
+
+        return mas;
+    }
+
+    static void Main()
+    {
+        int [,] mas=create_mas();
+
+        int n=mas.GetUpperBound(0)+1;
+
+        int[] points = new int[n];
+
+        for (int i=0; i<n; i++)
+        {
+            points[i] = i;
+        }
+
+        edge []t=new edge[mas.Length];
+        int g = 0;
+
+        for (int i=0; i< mas.GetUpperBound(0)+1; i++)
+        {
+            for (int j = 0; j < mas.GetUpperBound(1)+1; j++)
+            {
+                if (mas[i,j]==1)
+                {
+                    t[g] = new edge();
+                    t[g].point1 = points[i];
+                    t[g].point2 = points[j];
+                    g++;
+                }
+            }
+        }
+
+        edge[] edges = new edge[g];
+        for (int i=0; i<g; i++)
+        {
+            edges[i] = t[i];
+        }
+
+        Queue<int> answ = Find_Cycle(points, edges);
+
+        Console.WriteLine("Гамильтонов цикл");
+        for (int i=0; i<answ.Count; i++)
+        {
+            Console.Write(answ.ElementAt(i)+" ");
+        }
+    }
+
+    static Queue<int> Find_Cycle(int[]mas, edge []edges)
+    {
+        Queue<int> points = new Queue<int>();
+        for (int j=0; j<mas.Length; j++)
+        {
+            points.Enqueue(mas[j]);
+        }
+        for (int k=0; k<(mas.Length-1)*mas.Length; k++)
+        {
+            if (!EDGE_cont(points.ElementAt(0), points.ElementAt(1), edges))
+            {
+                int i = 2;
+                do
+                {
+                    i++;
+                }
+                while (!EDGE_cont(points.ElementAt(0), points.ElementAt(i), edges) || (!EDGE_cont(points.ElementAt(1), points.ElementAt(i+1), edges)));
+                points = Swap(points, i);
+            }
+            points.Enqueue(points.Dequeue());
+            //points.Dequeue();
+        }
+        return points;
+    }
+    static bool EDGE_cont(int p1, int p2, edge[] edges)
+    {
+        for (int i=0; i<edges.Length; i++)
+        {
+            if (edges[i].point1==p1)
+                if (edges[i].point2 == p2)
+                    return true;
+            else if (edges[i].point2 == p1)
+                    if (edges[i].point1 == p2)
+                        return true;
+        }
+        return false;
+    }
+    static Queue<int> Swap(Queue<int> points, int p)
+    {
+        Queue<int> new_points = new Queue<int>();
+        new_points.Enqueue(points.ElementAt(0));
+        for (int i=p; i>0; i--)
+        {
+            new_points.Enqueue(points.ElementAt(i));
+        }
+
+        for (int i = p+1; i < points.Count; i++) //возможно  points.Count+1
+        {
+            new_points.Enqueue(points.ElementAt(i));
+        }
+
+        return new_points;
+    }
+}
