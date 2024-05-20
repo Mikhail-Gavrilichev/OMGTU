@@ -1,0 +1,1 @@
+{"Response":[{"Discipline":"Programming","Group":"SC-992","GPA":4.5},{"Discipline":"Algebra","Group":"SC-991","GPA":4.5}]}
