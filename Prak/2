@@ -68,15 +68,9 @@ class H
     }
     public class Response3
     {
-        public Response3(string Discipline, string Group, double GPA)
-        {
-            this.Discipline = Discipline;
-            this.Group = Group;
-            this.GPA = GPA;
-        }
-        public string? Discipline;
-        public string? Group;
-        public double GPA;
+        public string? Discipline { get; set; }
+        public string? Group { get; set; }
+        public double GPA { get; set; }
     }
 
 
@@ -148,18 +142,47 @@ class H
         sw.Close();
     }
 
+    public class GroupGPA
+    {
+        public string group_name { get; set; }
+        public double GPA { get; set; }
+    }
+    public class DisciplineGroup
+    {
+        public string discipline { get; set; }
+        public List<student> student { get; set; }
+    }
+
     //По каждому предмету определить группу с лучшим средним баллом
     static void Task3(task m, string output_file)
     {
-        IEnumerable<Response3> groups_gpa = from i in m.data
-                                          group i by i.discipline into discipline_group
-                                          from k in discipline_group
-                                          group k by k.@group into g2
-                                          select new Response3(g2.First().discipline, g2.Key, Convert.ToDouble(g2.Sum(a => a.mark)) / g2.Count());
+        IEnumerable<DisciplineGroup> disp_group = from i in m.data
+                                                  group i by i.discipline into discipline_group
+                                                  select new DisciplineGroup {
+                                                      discipline = discipline_group.Key,
+                                                      student = discipline_group.Where(a=>a.discipline == discipline_group.Key).ToList()
+                                                  };
 
-        IEnumerable<Response3> ar = from i in groups_gpa
-                                    where i.GPA == groups_gpa.Max(a => a.GPA)
-                                    select i;
+        List<Response3> ar = new List<Response3>();
+        for (int i = 0; i < disp_group.Count(); i++)
+        {
+            IEnumerable<GroupGPA> group_gpa = from a in disp_group.ToList()[i].student
+                                              group a by a.@group into g
+                                              select new GroupGPA {
+                                                  group_name = g.Key,
+                                                  GPA = Convert.ToDouble(g.Sum(answ => answ.mark)) / g.Count()
+                                              };
+
+            IEnumerable<Response3> ar_elem = from a in group_gpa
+                                             where a.GPA == group_gpa.Max(c=>c.GPA)
+                                             select new Response3{
+                                                 Discipline = disp_group.ToList()[i].discipline,
+                                                 Group = a.group_name, 
+                                                 GPA = a.GPA
+                                             };
+            ar.AddRange(ar_elem);
+        }
+
 
         answ3 answ = new answ3();
         answ.Response = ar.ToArray();
