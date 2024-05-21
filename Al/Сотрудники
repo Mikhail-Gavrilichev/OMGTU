@@ -1,0 +1,76 @@
+using System;
+using System.Linq;
+using System.Collections;
+using System.ComponentModel.Design;
+using System.Diagnostics;
+using System.Drawing;
+using System.Dynamic;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Xml;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+class H
+{
+    class data
+    {
+        public int number;
+        public string FIO;
+        public string education;
+        public string speciality;
+        public double salary;
+        public int all;
+        public double price;
+        public data()
+        {
+            Console.WriteLine("Введите номер, ФИО, образование, специальность, зарпдлата, кол-во продуктов, цена за 1 товар");
+            this.number = Convert.ToInt32(Console.ReadLine());
+            this.FIO = Console.ReadLine();
+            this.education = Console.ReadLine();
+            this.speciality = Console.ReadLine();
+            this.salary = Convert.ToDouble(Console.ReadLine());
+            this.all = Convert.ToInt32(Console.ReadLine());
+            this.price = Convert.ToDouble(Console.ReadLine());
+        }
+    }
+    static void Main()
+    {
+        data[] inf = new data[3];
+        for (int i = 0; i<3; i++)
+        {
+            inf[i] = new data();
+        }
+
+        //1
+        var a = from person in inf
+                where person.salary < person.all * person.price
+                select person;
+        Console.WriteLine("Сотрудники, у которых зарплата меньше суммы создаваемой ими продукции");
+        foreach (var i in a)
+        {
+            Console.WriteLine(i.FIO);
+        }
+
+        //2
+        var b = (from person in inf
+                 select person.all).Sum();
+        Console.WriteLine("Количество продуктов по всем сотрудникам - "+b);
+
+        //3
+        var c = (from p in inf 
+                          select p.all * p.price).Sum();
+        Console.WriteLine("Стоимость всей производимой продукции - "+c);
+
+        //4
+        var d = (from person in inf
+                 where person.salary >= (person.all * person.price) * 0.5
+                 select person).Count();
+        Console.WriteLine("Количество сотрудников, у которых зарплата не меньше 50% от суммы создаваемой ими продукции - "+d);
+    }
+}
