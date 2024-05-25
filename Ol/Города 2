@@ -1,0 +1,220 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using static H;
+
+class H
+{
+    struct stPoint{
+        public int str;
+        public int row;
+        public stPoint(int str, int row)
+        {
+            this.str = str; 
+            this.row = row;
+        }
+    }
+
+    // Разбор входного файла
+    static void ParceInputFile(string FileName, out string[] Words)
+    {
+        StreamReader sr0 = new StreamReader(FileName);
+        string all_file = sr0.ReadToEnd();
+        sr0.Close();
+        char[] separators = new char[] { ' ', '.' , '\r', '\n'};
+        Words = all_file.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+    }
+    // Пачать ответа
+    static void PrintAnswer<T>(string file_name, T answ)
+    {
+
+        StreamWriter sw = new StreamWriter(file_name);
+        sw.Close();
+    }
+    // Матрица сопряжения для графа, состоящего из массива входных слов
+    static void FillArray(out int[,] mas, string[] Words)
+    {
+        int N = 'z' - 'a' + 1;
+        mas = new int[N, N];
+
+        for (int i = 0; i < Words.Length; i++)
+        {
+            mas[Words[i][0] - 'a', Words[i][Words[i].Length - 1] - 'a']++;
+        }
+    }
+
+    static bool FindRing(int[,] mas, int start_index, int end_index, out int ring_length, out List<stPoint> sList)
+    {
+        bool result = false;
+        ring_length = 0;
+        int max = 0;
+        List<stPoint> path = new List<stPoint>();
+        sList = new List<stPoint>();
+        if (start_index == end_index)
+            result = true;
+
+        int N_str;
+        if(start_index < 0)
+            N_str = end_index;
+        else
+            N_str= start_index;
+
+
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            if (mas[N_str, i] == 0)
+                continue;
+
+            if (i == end_index)
+            {
+                mas[N_str, i]--;
+                stPoint p = new ( N_str, i);
+                if (FindRing(mas, start_index, end_index, out ring_length, out path))
+                {
+                    ring_length += 1;
+                    path.Insert(0, p);
+                    if (max < ring_length)
+                    {
+                        max = ring_length;
+                        sList = path;
+                    }
+                }
+                else
+                {
+                    ring_length = 1;
+                    path.Insert(0, p);
+                    sList = path;
+                }
+                result = true;
+                mas[N_str, i]++;
+            }
+            else
+            {
+                mas[N_str, i]--;
+                start_index = i;
+                if (FindRing(mas, start_index, end_index, out ring_length, out path))
+                {
+                    ring_length += 1;
+                    stPoint p = new(N_str, i);
+                    path.Insert(0, p);
+                    result = true;
+                    if (max < ring_length)
+                    {
+                        max = ring_length;
+                        sList = path;
+                    }
+                }
+                mas[N_str, i]++;
+            }
+        }
+
+        ring_length = max;
+        return result;
+    }
+
+    static int GetMaxRingLength(int[,] mas, out List<stPoint> Path)
+    {
+        int max = 0;
+        Path = new List<stPoint>();
+        List<stPoint> sList;
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            int ring_length;
+            int begin_index = -1;
+            int end_index   = i;
+            //Console.Write(i + ":");
+            if (FindRing(mas, begin_index, end_index, out ring_length, out sList))
+            {
+                ring_length++;
+                if (max < ring_length)
+                {
+                    max = ring_length;
+                    Path = sList;
+                }
+            }
+            //Console.WriteLine(" L=" + ring_length);
+        }
+        return max;
+    }
+    static void Main()
+    {
+        string[] Words;
+        ParceInputFile("input.txt", out Words);
+
+        int[,] adjacency_matrix;
+        List<stPoint> Path;
+        int longest_path;
+        StreamWriter output_file = new StreamWriter("output.txt");
+
+        for (; ; )
+        {
+            FillArray(out adjacency_matrix, Words);
+            longest_path = GetMaxRingLength(adjacency_matrix, out Path);
+            if (longest_path <= 0)
+                break;
+            Console.WriteLine("Длина максимального кольца = " + longest_path);
+            output_file.WriteLine(longest_path);
+            PrintPath(Path, Words);
+            DeleteWords(Path, ref Words);
+        }
+        output_file.Close();
+    }
+
+
+
+    static void DeleteWords(List<stPoint> Path, ref string[] Words)
+    {
+        for (int i = 0; i < Path.Count; i++)
+        {
+            for (int j = 0; j < Words.Length; j++)
+            {
+                if ((Words[j][0] == Path[i].str + 'a') && (Words[j][Words[j].Length - 1] == Path[i].row + 'a'))
+                {
+                    Delete(ref Words, j);
+                    break;
+                }
+            }
+        }
+    }
+    static void Delete(ref string[] Words, int ind)
+    {
+        string[] ar = null;
+        if ((Words.Length != 0) && (ind < Words.Length))
+        {
+            ar = new string[Words.Length - 1];
+            for (int i = 0; i < ind; i++)
+            {
+                ar[i] = Words[i];
+            }
+            for (int i = ind + 1; i < Words.Length; i++)
+            {
+                ar[i - 1] = Words[i];
+            }
+        }
+        Words = ar;
+    }
+    static void PrintPath(List<stPoint> Path, string[] Words_array)
+    {
+        string[] Words = new string [Words_array.Length];
+        for (int i = 0; i < Words.Length; i++)
+        {
+            Words[i] = Words_array[i];
+        }
+
+
+        for (int i = 0; i < Path.Count; i++)
+        {
+            for (int j = 0; j < Words.Length; j++)
+            {
+                if ((Words[j][0] == Path[i].str + 'a') && (Words[j][Words[j].Length - 1] == Path[i].row + 'a'))
+                {
+                    Console.WriteLine(Words[j]);
+                    Words[j] = " ";
+                }
+            }
+        }
+    }
+}
+
