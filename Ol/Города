@@ -1,0 +1,145 @@
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using static H;
+
+class H
+{
+    // Разбор входного файла
+    static void ParceInputFile(string FileName, out string[] Words)
+    {
+        StreamReader sr0 = new StreamReader(FileName);
+        string all_file = sr0.ReadToEnd();
+        sr0.Close();
+        char[] separators = new char[] { ' ', '.' , '\r', '\n'};
+        Words = all_file.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+    }
+    // Пачать ответа
+    static void PrintAnswer<T>(string file_name, T answ)
+    {
+
+        StreamWriter sw = new StreamWriter(file_name);
+        sw.Close();
+    }
+    // Матрица сопряжения для графа, состоящего из массива входных слов
+    static void FillArray(out int[,] mas, string[] Words)
+    {
+        int N = 'z' - 'a' + 1;
+        mas = new int[N, N];
+
+        for (int i = 0; i < Words.Length; i++)
+        {
+            mas[Words[i][0] - 'a', Words[i][Words[i].Length - 1] - 'a']++;
+        }
+    }
+
+    static bool FindRing(int[,] mas, int start_index, int end_index, out int ring_length)
+    {
+        bool result = false;
+        ring_length = 0;
+        int max = 0;
+
+        if (start_index == end_index)
+            result = true;
+
+        int N_str;
+        if(start_index < 0)
+            N_str = end_index;
+        else
+            N_str= start_index;
+
+
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            if (mas[N_str, i] == 0)
+                continue;
+
+            if (i == end_index)
+            {
+                mas[N_str, i]--;
+                if (FindRing(mas, start_index, end_index, out ring_length))
+                {
+                    ring_length += 1;
+                    if (max < ring_length)
+                        max = ring_length;
+                }
+                else
+                {
+                    ring_length = 1;
+                }
+                result = true;
+                mas[N_str, i]++;
+            }
+            else
+            {
+                mas[N_str, i]--;
+                start_index = i;
+                if (FindRing(mas, start_index, end_index, out ring_length))
+                {
+                    ring_length += 1;
+                    result = true;
+                    if (max < ring_length)
+                        max = ring_length;
+                }
+                mas[N_str, i]++;
+            }
+        }
+
+        ring_length = max;
+        return result;
+    }
+
+    static int GetMaxRingLength(int[,] mas)
+    {
+        int max = 0;
+        for (int i = 0; i < mas.GetUpperBound(0) + 1; i++)
+        {
+            int ring_length;
+            int begin_index = -1;
+            int end_index   = i;
+            Console.Write(i + ":");
+            if (FindRing(mas, begin_index, end_index, out ring_length))
+            {
+                ring_length++;
+                if (max < ring_length)
+                    max = ring_length;
+            }
+            Console.WriteLine(" L=" + ring_length);
+        }
+        return max;
+    }
+    static void Main()
+    {
+        string[] Words;
+        ParceInputFile("input.txt", out Words);
+
+        int[,] adjacency_matrix;
+        FillArray(out adjacency_matrix, Words);
+        //LoadTestArray(out adjacency_matrix);
+        int longest_path = GetMaxRingLength(adjacency_matrix);
+        Console.WriteLine("Длина максимального колца = " + longest_path);
+
+    }
+
+    static void LoadTestArray(out int[,] mas)
+    {
+        int N = 8;
+        mas = new int[N, N];
+
+        mas[0, 2] = 2;
+        mas[2, 1] = 1;
+        mas[2, 3] = 1;
+        mas[3, 4] = 1;
+        mas[3, 5] = 1;
+        mas[4, 2] = 1;
+        mas[4, 5] = 1;
+        mas[5, 5] = 1;
+        mas[5, 6] = 1;
+        mas[6, 4] = 1;
+        mas[6, 7] = 1;
+        mas[7, 2] = 1;
+    }
+
+}
+
