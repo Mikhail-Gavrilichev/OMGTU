@@ -16,6 +16,8 @@ using static System.Net.Mime.MediaTypeNames;
 using static H;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.Security.AccessControl;
+
 class H
 {
     class edge
@@ -23,7 +25,7 @@ class H
         public int point1;
         public int point2;
         public int c;
-        public int f=0;
+        public int f = 0;
     }
     static int[,] create_mas()
     {
@@ -67,33 +69,75 @@ class H
         int n = mas.GetUpperBound(0) + 1;
 
         int[] points = new int[5];
-        points = [0,1,2,3,4];
-
-        edge[] edges = new edge[9];
-
-        edges[0] = new edge {point1=0, point2=1};
-        edges[1] = new edge { point1 = 0, point2 = 1, c=7};
-        edges[2] = new edge { point1 = 0, point2 = 3, c=4};
-        edges[3] = new edge { point1 = 1, point2 = 2, c=4};
-        edges[4] = new edge { point1 = 1, point2 = 3, c=8};
-        edges[5] = new edge { point1 = 1, point2 = 4, c=4};
-        edges[6] = new edge { point1 = 2, point2 = 3, c=5};
-        edges[7] = new edge { point1 = 2, point2 = 4, c=12};
-        edges[8] = new edge { point1 = 3, point2 = 4, c=11};
-
-        int []visited =new int[9];
-
-        for (int i=0; i<edges.Length; i++)
+        for (int i=0; i<5; i++)
         {
-            int q = Ford_F(edges[i].point1, edges[i].c, ref visited[i]);
-            Console.WriteLine(edges[i].point1 + " " + edges[i].point2 + " " + q + "/" + edges[i].c);
+            points[i] = i;
         }
+
+        edge[] edges = new edge[8];
+
+        edges[0] = new edge { point1 = 0, point2 = 1, c = 7 };
+        edges[1] = new edge { point1 = 0, point2 = 3, c = 4 };
+        edges[2] = new edge { point1 = 1, point2 = 2, c = 4 };
+        edges[3] = new edge { point1 = 1, point2 = 3, c = 8 };
+        edges[4] = new edge { point1 = 1, point2 = 4, c = 4 };
+        edges[5] = new edge { point1 = 2, point2 = 3, c = 5 };
+        edges[6] = new edge { point1 = 2, point2 = 4, c = 12 };
+        edges[7] = new edge { point1 = 3, point2 = 4, c = 11 };
+
+        edge back=new edge { };
+        int q = 0;
+        for (; ; )
+        {
+            int[] visited = new int[5];
+            int q1 = Ford_F(points[0], int.MaxValue, ref visited, edges, ref back);
+            if (q1 == 0)
+            {
+                break;
+            }
+            q += q1;
+        }
+        Console.WriteLine(q);
     }
-    static int Ford_F(int u, int c, ref int vis)
+
+    static int Ford_F(int u, int c, ref int []visited, edge []edges, ref edge back)
     {
         if (u == 4)
             return c;
-        vis = 1;
-        for (int i=0; )
+        visited[u] = 1;
+        var q = from i in edges
+                where i.point1 == u 
+                select i;
+        foreach (var edge in q)
+        {
+            edge uv = edge;
+            if ((visited[uv.point2]!=1)&&(uv.f<uv.c))
+            {
+                int delta = Ford_F(uv.point2, min(c, uv.c - uv.f), ref visited, edges, ref back);
+                if (delta>0)
+                {
+                    uv.f += delta;
+                    //WriteBack(back, delta);
+                    //back = uv;
+                    return delta;
+                }
+            }
+        }
+        return 0;
+    }
+    static void WriteBack(edge a, int b)
+    {
+        if (a!=null)
+        {
+            a.f -= b;
+        }    
+    }
+    static int min(int a, int b)
+    {
+        if (a<b)
+        {
+            return a;
+        }
+        return b;
     }
 }
