@@ -1,0 +1,38 @@
+using System.Reflection;
+string assemblyFile = "E:/work/Core/core.dll";
+Assembly assem = Assembly.LoadFrom(assemblyFile);
+Type[] types = assem.GetTypes();
+foreach (Type q in types)
+{
+    Console.WriteLine("");
+    if (q.IsClass) 
+    { 
+        Console.WriteLine("Класс - "+q.FullName); 
+    }
+    else if (q.IsInterface) 
+    { 
+        Console.WriteLine("Интерфейс - " + q.FullName);
+    }
+
+    if (q.BaseType == typeof(Attribute)) 
+    { 
+        Console.WriteLine("Является атрибутом"); 
+    }
+
+    if (q.IsInterface || q.IsClass)
+    {
+        MethodInfo[] methods = q.GetMethods();
+        Console.WriteLine("Список публичных методов: ");
+        foreach (MethodInfo t in methods)
+        {
+            ParameterInfo[] parametres = t.GetParameters();
+            Console.WriteLine("Имя - "+ t.Name);
+            Console.WriteLine("Тип возвращаемого значения - "+ t.ReturnType);
+            Console.WriteLine("Формальные параметры: ");
+            foreach (ParameterInfo p in parametres)
+            {
+                Console.WriteLine(p.ParameterType +" "+ p.Name);
+            }
+        }
+    }
+}
