@@ -1,0 +1,163 @@
+using System;
+using System.ComponentModel;
+using System.ComponentModel.Design;
+using System.Drawing;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
+using System.Xml;
+using System.Xml.Linq;
+using Newtonsoft.Json;
+using static System.Net.Mime.MediaTypeNames;
+using static H;
+
+class H
+{
+    public class task
+    {
+        public string taskName;
+        public student[] data;
+    }
+    public class student
+    {
+        public string name;
+        public string group;
+        public string discipline;
+        public int mark;
+    }
+
+
+
+
+    static void PrintAnswer<T>(string file_name, T answ)
+    {
+        string json = JsonConvert.SerializeObject(answ);
+
+        StreamWriter sw = new StreamWriter(file_name);
+        sw.Write(json);
+        sw.Close();
+    }
+
+    static void Main()
+    {
+        Task("input1.txt", "output1.txt");
+        Task("input2.txt", "output2.txt");
+        Task("input3.txt", "output3.txt");
+    }
+    static void Task(string input_file, string output_file)
+    {
+        StreamReader sr0 = new StreamReader(input_file);
+        string json = sr0.ReadToEnd();
+        task m = JsonConvert.DeserializeObject<task>(json);
+        if (m.taskName == "GetStudentsWithHighestGPA")
+        {
+            Task1(m, output_file);
+        }
+        else if (m.taskName == "CalculateGPAByDiscipline")
+        {
+            Task2(m, output_file);
+        }
+        else if (m.taskName == "GetBestGroupsByDiscipline")
+        {
+            Task3(m, output_file);
+        }
+        else
+        {
+            Console.WriteLine("Неизвестное задание");
+        }
+        sr0.Close();
+    }
+
+
+    public class answ1
+    {
+        public IEnumerable<Response1> Response;
+    }
+    public class Response1
+    {
+        public string? Cadet;
+        public double GPA;
+    }
+    // Определить студента/студентов с максимальным средним баллом. 
+    static void Task1(task m, string output_file)
+    {
+        IEnumerable<Response1> students = from i in m.data
+                                          group i by i.name into g
+                                          select new Response1 { Cadet = g.Key, GPA = g.Average(A => A.mark) };
+
+        answ1 answ = new answ1();
+        answ.Response = from i in students
+                        where i.GPA == students.Max(a => a.GPA)
+                        select i;
+
+        PrintAnswer(output_file, answ);
+    }
+
+
+
+    public class answ2
+    {
+        public IEnumerable<Response2> Response;
+    }
+    public class Response2
+    {
+        public string? discipline;
+        public double GPA;
+    }
+
+    // Вычислить средний бал по каждому предмету
+    static void Task2(task m, string output_file)
+    {
+        answ2 answ = new answ2();
+        answ.Response = from i in m.data
+                        group i by i.discipline into g
+                        select new Response2 { discipline = g.Key, GPA = g.Average(A => A.mark) };
+
+        PrintAnswer(output_file, answ);
+    }
+
+
+    public class answ3
+    {
+        public List<Response3> Response;
+    }
+    public class Response3
+    {
+        public string? Discipline { get; set; }
+        public string? Group { get; set; }
+        public double GPA { get; set; }
+        public  Response3(string str1, string str2, double gpa)
+        {
+            Discipline=str1;
+            Group=str2;
+            GPA = gpa;
+        }
+    }
+    //По каждому предмету определить группу с лучшим средним баллом
+    static void Task3(task m, string output_file)
+    {
+        var group_by_discipline = from i in m.data
+                                  group i by i.discipline into discipline_group
+                                  select new
+                                  {
+                                      discipline = discipline_group.Key,
+                                      group_by_group = (from j in discipline_group
+                                                       group j by j.@group into g
+                                                       select new
+                                                       {
+                                                           group_name = g.Key,
+                                                           GPA = g.Average(A => A.mark)
+                                                       }).OrderByDescending(x => x.GPA).ToList()[0],
+                                  };
+
+        answ3 answ = new answ3();
+        answ.Response = new List<Response3>();
+        foreach (var gd in group_by_discipline)
+        {
+            answ.Response.Add(new Response3(gd.discipline, gd.group_by_group.group_name, gd.group_by_group.GPA));
+        }
+        PrintAnswer(output_file, answ);
+    }
+}
