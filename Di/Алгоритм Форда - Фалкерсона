@@ -18,33 +18,99 @@ using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Security.AccessControl;
 
-class H
+public class H
 {
-    class edge
+    static bool Find_way(int[,] graf, int s, int t, ref int[] parent, int n)
     {
-        public int point1;
-        public int point2;
-        public int c;
-        public int f = 0;
+        bool[] visited = new bool[n];
+        for (int i = 0; i < n; ++i)
+        {
+            visited[i] = false;
+        }
+
+        List<int> q = new List<int>(); 
+        q.Add(s);               
+        visited[s] = true;
+        parent[s] = -1;
+
+        while (q.Count != 0)
+        {
+            int u = q[0];
+            q.RemoveAt(0);
+
+            for (int i = 0; i < n; i++)
+            {
+                if (visited[i] == false && graf[u, i] > 0)
+                {
+                    if (i == t)
+                    {
+                        parent[i] = u;
+                        return true;
+                    }
+                    q.Add(i);
+                    parent[i] = u;
+                    visited[i] = true;
+                }
+            }
+        }
+        return false;
+    }
+
+    static int fordFulkerson(int[,] gr, int s, int t, int n)
+    {
+        int i, j;
+        int[,] graf = new int[n, n];
+
+        for (i = 0; i < n; i++)
+        {
+            for (j = 0; j < n; j++)
+            {
+                graf[i, j] = gr[i, j];
+            }
+        }
+
+        int[] parents = new int[n];
+        int max = 0;                                 // маскимальный поток
+
+        while (Find_way(graf, s, t, ref parents, n))
+        {
+            int flow = int.MaxValue;                 // увеличиваюший поток
+            for (j = t; j != s; j = parents[j])
+            {
+                i = parents[j];
+                flow = Math.Min(flow, graf[i, j]);
+            }
+
+            for (j = t; j != s; j = parents[j])
+            {
+                i = parents[j];
+                graf[i, j] -= flow;
+                graf[j, i] += flow;
+            }
+
+           max += flow;
+        }
+
+        return max;
     }
     static int[,] create_mas()
     {
-        int[,] mas = new int[5, 5];
+        int[,] mas = new int[4, 4];
 
         mas[0, 0] = 0;
-        mas[0, 1] = 1;
-        mas[0, 2] = 1;
+        mas[0, 1] = 1000;
+        mas[0, 2] = 1000;
         mas[0, 3] = 0;
 
         mas[1, 0] = 0;
         mas[1, 1] = 0;
         mas[1, 2] = 1;
-        mas[1, 3] = 1;
+        mas[1, 3] = 1000;
 
         mas[2, 0] = 0;
         mas[2, 1] = 0;
         mas[2, 2] = 0;
-        mas[2, 3] = 1;
+        mas[2, 3] = 1000;
 
         mas[3, 0] = 0;
         mas[3, 1] = 0;
@@ -53,78 +119,11 @@ class H
 
         return mas;
     }
-    static void Main()
+    public static void Main()
     {
+        int n = 4;
         int[,] mas = create_mas();
-        int n = mas.GetUpperBound(0) + 1;
 
-        int[] points = new int[5];
-        for (int i=0; i<5; i++)
-        {
-            points[i] = i;
-        }
-
-        edge[] edges = new edge[5];
-
-        edges[0] = new edge { point1 = 0, point2 = 1, c = 1000 };
-        edges[1] = new edge { point1 = 0, point2 = 2, c = 1000 };
-        edges[2] = new edge { point1 = 1, point2 = 2, c = 1 };
-        edges[3] = new edge { point1 = 1, point2 = 3, c = 1000 };
-        edges[4] = new edge { point1 = 2, point2 = 3, c = 1000 };
-
-        edge back=new edge { };
-        int q = 0;
-        for (; ; )
-        {
-            int[] visited = new int[5];
-            int q1 = Ford_F(points[0], int.MaxValue, ref visited, edges, ref back);
-            if (q1 == 0)
-            {
-                break;
-            }
-            q += q1;
-        }
-        Console.WriteLine("Максимальный поток - "+q);
-    }
-
-    static int Ford_F(int u, int c, ref int []visited, edge []edges, ref edge back)
-    {
-        if (u == 3)
-            return c;
-        visited[u] = 1;
-        var q = from i in edges
-                where i.point1 == u 
-                select i;
-        foreach (var edge in q)
-        {
-            edge uv = edge;
-            if ((visited[uv.point2]!=1)&&(uv.f<uv.c))
-            {
-                back = uv;
-                int delta = Ford_F(uv.point2, min(c, uv.c - uv.f), ref visited, edges, ref back);
-                if (delta>0)
-                {
-                    uv.f += delta;
-                    WriteBack(back, delta);
-                    return delta;
-                }
-            }
-        }
-        return 0;
-    }
-    static void WriteBack(edge a, int b)
-    {
-        if (a!=null)
-        {
-            a.f -= b;
-        }    
-    }
-    static int min(int a, int b)
-    {
-        if (a<b)
-        {
-            return a;
-        }
-        return b;
+        Console.WriteLine("q= " + fordFulkerson(mas, 0, 3, n));
     }
 }
