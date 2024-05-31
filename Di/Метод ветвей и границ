@@ -1,0 +1,307 @@
+using System;
+using System.IO;
+
+public class H
+{
+    const int M = int.MaxValue;
+
+    static int N;                   // Размерность матрицы
+
+    
+    struct gran                     // Грань для записи в путь path
+    {
+        public int i;
+        public int j;
+    }
+    
+    static List<gran> path;         // Путь
+    static int[] min_str;
+    static int[] min_row;
+    static bool[] visited_string;   // удаленные строки и столдцы
+    static bool[] visited_row;
+    static int Length;              // Длина пути
+    static int [,] Ocenka;
+
+    static void WriteToPath(int i, int j, int [,] matr)
+    {
+        path.Add(new gran { i = i, j = j });
+
+        foreach(var a in path)
+        {
+            if(j == a.i)
+            {
+                matr[a.j, i] = M;
+            }
+        }
+
+    }
+
+    static public void Main()
+    {
+        // Вводим матрицу расстояний
+        int[,] matr = {
+            {  M, 27, 43, 16, 30, 26 },
+            {  7,  M, 16,  1, 30, 25 },
+            { 20, 13,  M, 35,  5,  0 },
+            { 21, 16, 25,  M, 18, 18 },
+            { 12, 46, 27, 48,  M,  5 },
+            { 23,  5,  5,  9,  5,  M }
+        };
+
+        // Определяем параметры
+        N = matr.GetUpperBound(0) + 1;
+        path = new List<gran>();
+        visited_string = new bool[N];
+        visited_row = new bool[N];
+        min_str = new int[N];
+        min_row = new int[N];
+        Ocenka  = new int[N, N];
+
+
+
+        if (GetPath(matr))
+        {
+            PrintPath(path);
+        }
+        else
+        {
+            Console.WriteLine("Путь не найден");
+        }
+    }
+
+    static bool GetPath(int [,] matr)
+    {
+        Length = 0;
+
+        for (; ; )
+        {
+            // Редукция матрицы
+            int bottom_gran;
+            Reduction(matr, out bottom_gran);
+            Length += bottom_gran;
+
+            PrintMatr(matr);
+            Console.WriteLine("Length = " + Length);
+
+            if (path.Count == N - 2)
+                break;
+
+
+            // Вычисляем оценки
+            int str, row;
+            GetOcenkaMatr(matr, ref Ocenka, out str, out row);
+
+            PrintMatr(Ocenka);
+            Console.WriteLine("str = " + str + "  row = " + row);
+            WriteToPath(str, row, matr);
+            PrintPath(path);
+
+            // Удаляем строку и столбец
+            matr[str, row] = matr[row, str] = M;
+            visited_string[str] = true;
+            visited_row[row] = true;
+
+            
+        }
+
+        // Добавляем последние две грани
+        for(int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                for(int j = 0; j < N; j++)
+                {
+                    if (visited_row[j] == false)
+                    {
+                        if (matr[i,j] == 0)
+                        {
+                            WriteToPath(i, j, matr);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return true;
+    }
+
+
+    static void GetOcenkaMatr(int [,] matr, ref int [,] Ocenka, out int str, out int row)
+    {
+        int max = 0;
+        str = 0;
+        row = 0;
+
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                Ocenka[i, j] = 0;
+
+        for (int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (visited_row[j] == false)
+                    {
+                        if (matr[i, j] == 0)
+                        {
+                            Ocenka[i, j] = GetOcenkaMatr(matr, i , j);
+                            if(max < Ocenka[i, j])
+                            {
+                                max = Ocenka[i, j];
+                                str = i;
+                                row = j;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static int GetOcenkaMatr(int [,] matr, int str , int row)
+    {
+        int a = matr[str, row];
+        matr[str, row] = M;
+        // минимальная по строке
+        int min1 = min_in_string(matr, str);
+        int min2 = min_in_row(matr, row);
+
+        matr[str, row] = a;
+        return min1 + min2;
+    }
+    // Минимум в строке
+    static int min_in_string(int [,] matr, int str)
+    {
+        int min = M;
+        for (int j = 0; j < N; j++)
+        {
+            if (visited_row[j] == false)
+            {
+                if (matr[str, j] < min)
+                    min = matr[str, j];
+            }
+        }
+        return min;
+    }
+    // Минимум в столбце
+    static int min_in_row(int[,] matr, int row)
+    {
+        int min = M;
+        for (int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                if (matr[i, row] < min)
+                    min = matr[i, row];
+            }
+        }
+        return min;
+    }
+    static void Reduction(int [,] matr, out int bottom_granica)
+    {
+        bottom_granica = 0;
+        // минимальные по строкам
+        for (int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                min_str[i] = min_in_string(matr, i);
+                bottom_granica += min_str[i];
+            }
+        }
+
+        // Редукция строк
+        for (int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (visited_row[j] == false)
+                    {
+                        if (matr[i, j] != M)
+                            matr[i, j] -= min_str[i];
+                    }
+                }
+            }
+        }
+
+        // минимальные по столбцам
+        for (int j = 0; j < N; j++)
+        {
+            if (visited_row[j] == false)
+            {
+                min_row[j] = min_in_row(matr, j);
+                bottom_granica += min_row[j];
+            }
+        }
+
+        // Редукция столбцов
+        for (int j = 0; j < N; j++)
+        {
+            if (visited_row[j] == false)
+            {
+                for (int i = 0; i < N; i++)
+                {
+                    if (visited_row[i] == false)
+                    {
+                        if (matr[i, j] != M)
+                            matr[i, j] -= min_row[j];
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    static void PrintPath(List<gran> path)
+    {
+        int a = M;
+        foreach(var g in path)
+        {
+            if (g.i < a)
+                a = g.i;
+        }
+
+        Console.Write(a + 1);
+        
+        for (int i = 0; i < path.Count; i++)
+        {
+            for (int j = 0; j < path.Count; j++)
+            {
+                if (path[j].i == a)
+                {
+                    a = path[j].j;
+                    Console.Write("->" + (a + 1));
+                    break;
+                }
+            }
+        }
+    }
+    // Печать матрицы для отладки
+    static void PrintMatr(int [,] matr)
+    {
+        for(int i = 0; i < N; i++)
+        {
+            if (visited_string[i] == false)
+            {
+                for (int j = 0; j < N; j++)
+                {
+                    if (visited_row[j] == false)
+                    {
+                        if(matr[i, j] == M)
+                            Console.Write(" M ");
+                        else
+                            Console.Write(matr[i, j] + " ");
+                    }
+                }
+                Console.WriteLine();
+            }
+        }
+        Console.WriteLine();
+    }
+}
