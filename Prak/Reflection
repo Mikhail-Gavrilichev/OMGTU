@@ -1,38 +1,68 @@
 using System.Reflection;
-string assemblyFile = "E:/work/Core/core.dll";
+string assemblyFile = "core.dll";
 Assembly assem = Assembly.LoadFrom(assemblyFile);
 Type[] types = assem.GetTypes();
-foreach (Type q in types)
+
+var class_list     = from q in types where q.IsClass     select q;
+var interface_list = from q in types where q.IsInterface select q;
+
+foreach (Type q in class_list)
 {
-    Console.WriteLine("");
-    if (q.IsClass) 
-    { 
-        Console.WriteLine("Класс - "+q.FullName); 
-    }
-    else if (q.IsInterface) 
-    { 
-        Console.WriteLine("Интерфейс - " + q.FullName);
-    }
+    Console.WriteLine("\r\nКласс - " + q.FullName);
+    PrintMethods(q);
+}
+foreach (Type q in interface_list)
+{
+    Console.WriteLine("\r\nИнтерфейс - " + q.FullName);
+    PrintMethods(q);
+}
 
-    if (q.BaseType == typeof(Attribute)) 
-    { 
-        Console.WriteLine("Является атрибутом"); 
-    }
 
-    if (q.IsInterface || q.IsClass)
+static void PrintMethods(Type q)
+{
+    MethodInfo[] methods = q.GetMethods();
+    Console.WriteLine("Список публичных методов: ");
+    foreach (MethodInfo t in methods)
     {
-        MethodInfo[] methods = q.GetMethods();
-        Console.WriteLine("Список публичных методов: ");
-        foreach (MethodInfo t in methods)
+        ParameterInfo[] parametres = t.GetParameters();
+        Console.WriteLine("Имя - " + t.Name);
+        Console.WriteLine("Тип возвращаемого значения - " + t.ReturnType);
+        Console.WriteLine("Список формальных параметров: ");
+        foreach (ParameterInfo p in parametres)
         {
-            ParameterInfo[] parametres = t.GetParameters();
-            Console.WriteLine("Имя - "+ t.Name);
-            Console.WriteLine("Тип возвращаемого значения - "+ t.ReturnType);
-            Console.WriteLine("Формальные параметры: ");
-            foreach (ParameterInfo p in parametres)
-            {
-                Console.WriteLine(p.ParameterType +" "+ p.Name);
-            }
+            Console.WriteLine(p.ParameterType + " " + p.Name);
         }
     }
 }
+
+
+//foreach (Type q in types)
+//{
+//    Console.WriteLine("");
+//    if (q.IsClass) 
+//    { 
+//        Console.WriteLine("Класс - "+q.FullName); 
+//    }
+//    else if (q.IsInterface) 
+//    { 
+//        Console.WriteLine("Интерфейс - " + q.FullName);
+//    }
+
+//    if (q.IsInterface || q.IsClass)
+//    {
+//        MethodInfo[] methods = q.GetMethods();
+//        Console.WriteLine("Список публичных методов: ");
+//        foreach (MethodInfo t in methods)
+//        {
+//            ParameterInfo[] parametres = t.GetParameters();
+//            Console.WriteLine("Имя - "+ t.Name);
+//            Console.WriteLine("Тип возвращаемого значения - "+ t.ReturnType);
+//            Console.WriteLine("Список формальных параметров: ");
+//            foreach (ParameterInfo p in parametres)
+//            {
+//                Console.WriteLine(p.ParameterType +" "+ p.Name);
+//            }
+//        }
+//    }
+//}
+////убррать if // заменив на LINQ
